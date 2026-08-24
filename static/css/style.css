@@ -40,6 +40,14 @@
    BODY
 ========================================================= */
 
+html,
+body {
+
+    min-height: 100%;
+
+}
+
+
 body {
 
     min-height: 100vh;
@@ -339,7 +347,7 @@ body {
 
 
 /* =========================================================
-   HANGMAN AREA
+   HANGMAN
 ========================================================= */
 
 .hangman-container {
@@ -356,10 +364,6 @@ body {
 
 }
 
-
-/* =========================================================
-   HANGMAN
-========================================================= */
 
 .hangman {
 
@@ -440,7 +444,7 @@ body {
 
 
 /* =========================================================
-   LEFT ARM
+   ARMS
 ========================================================= */
 
 .left-arm {
@@ -467,10 +471,6 @@ body {
 }
 
 
-/* =========================================================
-   RIGHT ARM
-========================================================= */
-
 .right-arm {
 
     top: 71px;
@@ -496,7 +496,7 @@ body {
 
 
 /* =========================================================
-   LEFT LEG
+   LEGS
 ========================================================= */
 
 .left-leg {
@@ -522,10 +522,6 @@ body {
 
 }
 
-
-/* =========================================================
-   RIGHT LEG
-========================================================= */
 
 .right-leg {
 
@@ -571,20 +567,11 @@ body {
 
     gap: 8px;
 
-    margin-bottom: 25px;
-
-    cursor: pointer;
+    margin-bottom: 20px;
 
     user-select: none;
 
     -webkit-tap-highlight-color: transparent;
-
-}
-
-
-.word:focus {
-
-    outline: none;
 
 }
 
@@ -621,38 +608,33 @@ body {
 
 
 /* =========================================================
-   INVISIBLE SYSTEM KEYBOARD INPUT
+   HIDDEN INPUT
 ========================================================= */
 
 .keyboard-input {
 
-    position: fixed;
-
-    left: -100px;
-
-    top: 50%;
+    position: absolute;
 
     width: 1px;
 
     height: 1px;
 
-    padding: 0;
-
-    margin: 0;
-
-    border: 0;
-
-    outline: 0;
-
     opacity: 0;
 
-    background: transparent;
+    pointer-events: none;
 
-    color: transparent;
+    left: -9999px;
 
-    caret-color: transparent;
+}
 
-    z-index: -1;
+
+/* =========================================================
+   MOBILE KEYBOARD
+========================================================= */
+
+.mobile-keyboard {
+
+    display: none;
 
 }
 
@@ -808,7 +790,7 @@ body {
 
 
 /* =========================================================
-   ANSWER
+   RESULT WORD
 ========================================================= */
 
 .result-word {
@@ -955,22 +937,7 @@ footer {
 
 
 /* =========================================================
-   TABLET
-========================================================= */
-
-@media (max-width: 700px) {
-
-    .game-card {
-
-        padding: 24px;
-
-    }
-
-}
-
-
-/* =========================================================
-   MOBILE
+   MOBILE ONLY
 ========================================================= */
 
 @media (max-width: 600px) {
@@ -981,14 +948,14 @@ footer {
         width: 100%;
 
         padding:
-            12px 10px 16px;
+            12px 8px 16px;
 
     }
 
 
     .top-bar {
 
-        gap: 8px;
+        gap: 7px;
 
         margin-bottom: 10px;
 
@@ -1051,7 +1018,7 @@ footer {
 
     .score-item span {
 
-        font-size: 5.5px;
+        font-size: 5px;
 
     }
 
@@ -1066,7 +1033,7 @@ footer {
     .game-card {
 
         padding:
-            18px 12px;
+            18px 10px 20px;
 
         border-radius: 18px;
 
@@ -1094,9 +1061,11 @@ footer {
     }
 
 
+    /* Hangman */
+
     .hangman-container {
 
-        height: 220px;
+        height: 205px;
 
     }
 
@@ -1104,10 +1073,12 @@ footer {
     .hangman {
 
         transform:
-            scale(0.78);
+            scale(0.76);
 
     }
 
+
+    /* Word */
 
     .word {
 
@@ -1115,7 +1086,7 @@ footer {
 
         gap: 5px;
 
-        margin-bottom: 14px;
+        margin-bottom: 15px;
 
     }
 
@@ -1129,6 +1100,125 @@ footer {
         font-size: 24px;
 
         border-bottom-width: 2px;
+
+    }
+
+
+    /* =====================================================
+       ON-SCREEN KEYBOARD
+    ====================================================== */
+
+    .mobile-keyboard {
+
+        width: 100%;
+
+        max-width: 500px;
+
+        margin:
+            8px auto 20px;
+
+        display: flex;
+
+        flex-direction: column;
+
+        gap: 7px;
+
+    }
+
+
+    .keyboard-row {
+
+        display: flex;
+
+        justify-content: center;
+
+        gap: 5px;
+
+        width: 100%;
+
+    }
+
+
+    .keyboard-row button {
+
+        flex: 1;
+
+        min-width: 0;
+
+        max-width: 43px;
+
+        height: 43px;
+
+        border: 1px solid
+            rgba(255, 255, 255, 0.09);
+
+        border-radius: 9px;
+
+        background:
+            rgba(255, 255, 255, 0.055);
+
+        color: var(--text);
+
+        font-size: 12px;
+
+        font-weight: 800;
+
+        cursor: pointer;
+
+        -webkit-tap-highlight-color:
+            transparent;
+
+        touch-action: manipulation;
+
+        transition:
+            transform 0.1s ease,
+            background 0.15s ease,
+            opacity 0.15s ease;
+
+    }
+
+
+    .keyboard-row button:active {
+
+        transform:
+            scale(0.92);
+
+        background:
+            var(--accent);
+
+    }
+
+
+    .keyboard-row button.used {
+
+        opacity: 0.28;
+
+        cursor: not-allowed;
+
+    }
+
+
+    .keyboard-row button.correct {
+
+        background:
+            rgba(139, 92, 246, 0.35);
+
+        border-color:
+            var(--accent);
+
+    }
+
+
+    .keyboard-row button.wrong {
+
+        background:
+            rgba(239, 68, 68, 0.18);
+
+        border-color:
+            rgba(239, 68, 68, 0.4);
+
+        color:
+            #f87171;
 
     }
 
@@ -1175,14 +1265,14 @@ footer {
     .game-card {
 
         padding:
-            17px 10px;
+            17px 7px 18px;
 
     }
 
 
     .hangman-container {
 
-        height: 195px;
+        height: 190px;
 
     }
 
@@ -1190,7 +1280,7 @@ footer {
     .hangman {
 
         transform:
-            scale(0.70);
+            scale(0.68);
 
     }
 
@@ -1204,11 +1294,29 @@ footer {
 
     .word-letter {
 
-        width: 22px;
+        width: 21px;
 
         height: 34px;
 
-        font-size: 21px;
+        font-size: 20px;
+
+    }
+
+
+    .keyboard-row {
+
+        gap: 3px;
+
+    }
+
+
+    .keyboard-row button {
+
+        height: 39px;
+
+        border-radius: 7px;
+
+        font-size: 11px;
 
     }
 
