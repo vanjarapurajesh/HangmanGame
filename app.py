@@ -4,12 +4,12 @@ import random
 
 
 # =========================================================
-# FLASK APP
+# APP SETTINGS
 # =========================================================
 
 app = Flask(__name__)
 
-app.secret_key = "hangman-secret-key-change-before-deployment"
+app.secret_key = "change-this-secret-key"
 
 
 # =========================================================
@@ -35,7 +35,6 @@ WORDS_FILE = BASE_DIR / "data" / "words.txt"
 def load_words():
 
     if not WORDS_FILE.exists():
-
         raise FileNotFoundError(
             "data/words.txt was not found."
         )
@@ -52,16 +51,16 @@ def load_words():
 
             word = line.strip().lower()
 
+            # Only alphabetic words
             if word.isalpha():
-
                 words.append(word)
 
+    # Remove duplicates
     words = sorted(set(words))
 
     if not words:
-
         raise ValueError(
-            "data/words.txt is empty."
+            "No words found in data/words.txt"
         )
 
     return words
@@ -93,27 +92,19 @@ def start_new_game():
 
 
 # =========================================================
-# MAKE SURE GAME EXISTS
+# CHECK SESSION
 # =========================================================
 
 def ensure_game():
 
     required_keys = [
-
         "answer",
-
         "guessed_letters",
-
         "wrong_letters",
-
         "wrong_guesses",
-
         "score",
-
         "game_over",
-
         "won"
-
     ]
 
     for key in required_keys:
@@ -126,7 +117,7 @@ def ensure_game():
 
 
 # =========================================================
-# GET CURRENT GAME STATE
+# GET GAME STATE
 # =========================================================
 
 def get_game_state():
@@ -135,9 +126,9 @@ def get_game_state():
 
     answer = session["answer"]
 
-    guessed_letters = (
-        session["guessed_letters"]
-    )
+    guessed_letters = session[
+        "guessed_letters"
+    ]
 
     display_word = ""
 
@@ -153,11 +144,8 @@ def get_game_state():
 
 
     remaining_chances = (
-
         MAX_WRONG_GUESSES
-
         - session["wrong_guesses"]
-
     )
 
 
@@ -209,7 +197,7 @@ def index():
 
 
 # =========================================================
-# GET GAME
+# GET CURRENT GAME
 # =========================================================
 
 @app.route(
@@ -240,9 +228,9 @@ def api_guess():
         ensure_game()
 
 
-        # ---------------------------------------------
+        # -------------------------------------------------
         # GAME ALREADY FINISHED
-        # ---------------------------------------------
+        # -------------------------------------------------
 
         if session["game_over"]:
 
@@ -259,9 +247,9 @@ def api_guess():
             })
 
 
-        # ---------------------------------------------
-        # GET JSON
-        # ---------------------------------------------
+        # -------------------------------------------------
+        # GET REQUEST DATA
+        # -------------------------------------------------
 
         data = request.get_json(
             silent=True
@@ -280,30 +268,21 @@ def api_guess():
             })
 
 
-        # ---------------------------------------------
-        # GET LETTER
-        # ---------------------------------------------
-
         letter = str(
-
             data.get(
                 "letter",
                 ""
             )
-
         ).strip().lower()
 
 
-        # ---------------------------------------------
+        # -------------------------------------------------
         # VALIDATE LETTER
-        # ---------------------------------------------
+        # -------------------------------------------------
 
         if (
-
             len(letter) != 1
-
             or not letter.isalpha()
-
         ):
 
             return jsonify({
@@ -311,7 +290,7 @@ def api_guess():
                 "success": False,
 
                 "message":
-                    "Please enter one letter only.",
+                    "Please enter one letter.",
 
                 "game":
                     get_game_state()
@@ -330,9 +309,9 @@ def api_guess():
         )
 
 
-        # ---------------------------------------------
-        # DUPLICATE LETTER
-        # ---------------------------------------------
+        # -------------------------------------------------
+        # DUPLICATE GUESS
+        # -------------------------------------------------
 
         if letter in guessed_letters:
 
@@ -350,41 +329,36 @@ def api_guess():
             })
 
 
-        # ---------------------------------------------
-        # SAVE GUESSED LETTER
-        # ---------------------------------------------
+        # -------------------------------------------------
+        # SAVE GUESS
+        # -------------------------------------------------
 
-        guessed_letters.append(
-            letter
-        )
+        guessed_letters.append(letter)
 
         session["guessed_letters"] = (
             guessed_letters
         )
 
 
-        # ---------------------------------------------
+        # -------------------------------------------------
         # CORRECT GUESS
-        # ---------------------------------------------
+        # -------------------------------------------------
 
         if letter in answer:
 
-            # Every correct letter = +1
-
+            # Every correct letter = 1 point
             session["score"] += 1
 
             message = "Correct! +1"
 
 
-        # ---------------------------------------------
+        # -------------------------------------------------
         # WRONG GUESS
-        # ---------------------------------------------
+        # -------------------------------------------------
 
         else:
 
-            wrong_letters.append(
-                letter
-            )
+            wrong_letters.append(letter)
 
             session["wrong_letters"] = (
                 wrong_letters
@@ -392,27 +366,21 @@ def api_guess():
 
             session["wrong_guesses"] += 1
 
-            # Wrong letter = 0 points
-
+            # Wrong guess = 0 points
             message = "Wrong guess!"
 
 
-        # ---------------------------------------------
+        # -------------------------------------------------
         # CHECK WIN
-        # ---------------------------------------------
+        # -------------------------------------------------
 
-        has_won = True
-
-        for character in answer:
-
-            if character not in guessed_letters:
-
-                has_won = False
-
-                break
+        won = all(
+            character in guessed_letters
+            for character in answer
+        )
 
 
-        if has_won:
+        if won:
 
             session["game_over"] = True
 
@@ -421,16 +389,13 @@ def api_guess():
             message = "You found the word!"
 
 
-        # ---------------------------------------------
+        # -------------------------------------------------
         # CHECK LOSS
-        # ---------------------------------------------
+        # -------------------------------------------------
 
         elif (
-
             session["wrong_guesses"]
-
             >= MAX_WRONG_GUESSES
-
         ):
 
             session["game_over"] = True
@@ -440,9 +405,9 @@ def api_guess():
             message = "Game over!"
 
 
-        # ---------------------------------------------
-        # CREATE RESPONSE
-        # ---------------------------------------------
+        # -------------------------------------------------
+        # RESPONSE
+        # -------------------------------------------------
 
         response = {
 
@@ -456,8 +421,7 @@ def api_guess():
         }
 
 
-        # Reveal answer only when game ends
-
+        # Reveal answer only after game ends
         if session["game_over"]:
 
             response["answer"] = answer
@@ -471,17 +435,11 @@ def api_guess():
     except Exception as error:
 
         print()
-
         print("=" * 60)
-
-        print("HANGMAN SERVER ERROR")
-
+        print("HANGMAN ERROR")
         print("=" * 60)
-
         print(error)
-
         print("=" * 60)
-
         print()
 
 
@@ -521,7 +479,7 @@ def api_restart():
 
 
 # =========================================================
-# RUN
+# RUN SERVER
 # =========================================================
 
 if __name__ == "__main__":
