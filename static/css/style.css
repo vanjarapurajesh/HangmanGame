@@ -1,0 +1,1227 @@
+/* =========================================================
+   RESET
+========================================================= */
+
+* {
+
+    margin: 0;
+
+    padding: 0;
+
+    box-sizing: border-box;
+
+}
+
+
+/* =========================================================
+   VARIABLES
+========================================================= */
+
+:root {
+
+    --background: #08090d;
+
+    --card: #11131a;
+
+    --border:
+        rgba(255, 255, 255, 0.08);
+
+    --text: #f5f7fb;
+
+    --muted: #8d95a5;
+
+    --accent: #8b5cf6;
+
+    --accent-light: #a78bfa;
+
+    --blue: #6366f1;
+
+    --danger: #ef4444;
+
+}
+
+
+/* =========================================================
+   BODY
+========================================================= */
+
+body {
+
+    min-height: 100vh;
+
+    background:
+
+        radial-gradient(
+            circle at 10% 10%,
+            rgba(139, 92, 246, 0.15),
+            transparent 32%
+        ),
+
+        radial-gradient(
+            circle at 90% 90%,
+            rgba(99, 102, 241, 0.12),
+            transparent 30%
+        ),
+
+        var(--background);
+
+    color: var(--text);
+
+    font-family:
+
+        Inter,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+
+}
+
+
+/* =========================================================
+   APP
+========================================================= */
+
+.app {
+
+    width: min(
+        1050px,
+        92%
+    );
+
+    margin: auto;
+
+    padding:
+        35px 0 25px;
+
+}
+
+
+/* =========================================================
+   TOP BAR
+========================================================= */
+
+.top-bar {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    margin-bottom: 25px;
+
+}
+
+
+/* =========================================================
+   BRAND
+========================================================= */
+
+.brand {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+
+}
+
+
+.brand-logo {
+
+    width: 48px;
+
+    height: 48px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border-radius: 14px;
+
+    background:
+
+        linear-gradient(
+            135deg,
+            var(--accent),
+            var(--blue)
+        );
+
+    font-size: 20px;
+
+    font-weight: 900;
+
+    box-shadow:
+
+        0 12px 35px
+        rgba(139, 92, 246, 0.25);
+
+}
+
+
+.brand-text h1 {
+
+    font-size: 18px;
+
+    letter-spacing: 2px;
+
+}
+
+
+.brand-text span {
+
+    display: block;
+
+    margin-top: 3px;
+
+    color: var(--muted);
+
+    font-size: 9px;
+
+    letter-spacing: 2px;
+
+}
+
+
+/* =========================================================
+   SCOREBOARD
+========================================================= */
+
+.scoreboard {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+}
+
+
+.score-item {
+
+    min-width: 72px;
+
+    padding:
+        8px 12px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    gap: 3px;
+
+    border:
+        1px solid var(--border);
+
+    border-radius: 12px;
+
+    background:
+        rgba(255, 255, 255, 0.035);
+
+}
+
+
+.score-item span {
+
+    color: var(--muted);
+
+    font-size: 8px;
+
+    font-weight: 800;
+
+    letter-spacing: 1.3px;
+
+}
+
+
+.score-item strong {
+
+    min-width: 20px;
+
+    font-size: 16px;
+
+}
+
+
+.score-item:last-child strong {
+
+    color: var(--accent-light);
+
+}
+
+
+/* =========================================================
+   GAME CARD
+========================================================= */
+
+.game-card {
+
+    position: relative;
+
+    overflow: hidden;
+
+    padding: 35px;
+
+    border:
+        1px solid var(--border);
+
+    border-radius: 28px;
+
+    background:
+
+        linear-gradient(
+            145deg,
+            rgba(255, 255, 255, 0.045),
+            rgba(255, 255, 255, 0.012)
+        );
+
+    box-shadow:
+
+        0 35px 90px
+        rgba(0, 0, 0, 0.38);
+
+    backdrop-filter:
+        blur(25px);
+
+}
+
+
+/* =========================================================
+   GAME HEADER
+========================================================= */
+
+.game-header {
+
+    display: flex;
+
+    align-items: flex-start;
+
+    justify-content: space-between;
+
+}
+
+
+.eyebrow {
+
+    color: var(--accent-light);
+
+    font-size: 10px;
+
+    font-weight: 800;
+
+    letter-spacing: 2px;
+
+}
+
+
+.game-header h2 {
+
+    margin-top: 7px;
+
+    font-size:
+        clamp(
+            25px,
+            4vw,
+            34px
+        );
+
+}
+
+
+.word-info {
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: flex-end;
+
+    gap: 4px;
+
+}
+
+
+.word-info span {
+
+    color: var(--muted);
+
+    font-size: 9px;
+
+    letter-spacing: 1.5px;
+
+}
+
+
+.word-info strong {
+
+    font-size: 22px;
+
+}
+
+
+/* =========================================================
+   PROGRESS
+========================================================= */
+
+.progress-container {
+
+    width: 100%;
+
+    height: 5px;
+
+    margin-top: 22px;
+
+    overflow: hidden;
+
+    border-radius: 10px;
+
+    background:
+        rgba(255, 255, 255, 0.06);
+
+}
+
+
+.progress-bar {
+
+    width: 100%;
+
+    height: 100%;
+
+    border-radius: inherit;
+
+    background:
+
+        linear-gradient(
+            90deg,
+            var(--accent),
+            var(--blue)
+        );
+
+    transition:
+        width 0.35s ease;
+
+}
+
+
+/* =========================================================
+   HANGMAN AREA
+========================================================= */
+
+.hangman-container {
+
+    width: 100%;
+
+    height: 260px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+}
+
+
+/* =========================================================
+   HANGMAN PERSON
+========================================================= */
+
+.hangman {
+
+    position: relative;
+
+    width: 180px;
+
+    height: 220px;
+
+    margin: 0 auto;
+
+}
+
+
+/* =========================================================
+   BODY PARTS
+========================================================= */
+
+.hangman-part {
+
+    position: absolute;
+
+    opacity: 0;
+
+    background:
+        var(--text);
+
+    transition:
+        opacity 0.25s ease;
+
+}
+
+
+.hangman-part.visible {
+
+    opacity: 1;
+
+}
+
+
+/* =========================================================
+   HEAD
+========================================================= */
+
+.head {
+
+    top: 20px;
+
+    left: 66px;
+
+    width: 48px;
+
+    height: 48px;
+
+    border:
+        4px solid var(--accent-light);
+
+    border-radius: 50%;
+
+    background:
+        transparent;
+
+}
+
+
+/* =========================================================
+   BODY
+========================================================= */
+
+.body {
+
+    top: 68px;
+
+    left: 88px;
+
+    width: 5px;
+
+    height: 65px;
+
+    border-radius: 5px;
+
+    background:
+        var(--accent-light);
+
+}
+
+
+/* =========================================================
+   LEFT ARM
+========================================================= */
+
+.left-arm {
+
+    top: 75px;
+
+    left: 87px;
+
+    width: 5px;
+
+    height: 58px;
+
+    border-radius: 5px;
+
+    background:
+        var(--accent-light);
+
+    transform:
+
+        rotate(45deg);
+
+    transform-origin:
+        top center;
+
+}
+
+
+/* =========================================================
+   RIGHT ARM
+========================================================= */
+
+.right-arm {
+
+    top: 75px;
+
+    left: 89px;
+
+    width: 5px;
+
+    height: 58px;
+
+    border-radius: 5px;
+
+    background:
+        var(--accent-light);
+
+    transform:
+
+        rotate(-45deg);
+
+    transform-origin:
+        top center;
+
+}
+
+
+/* =========================================================
+   LEFT LEG
+========================================================= */
+
+.left-leg {
+
+    top: 125px;
+
+    left: 87px;
+
+    width: 5px;
+
+    height: 72px;
+
+    border-radius: 5px;
+
+    background:
+        var(--accent-light);
+
+    transform:
+
+        rotate(35deg);
+
+    transform-origin:
+        top center;
+
+}
+
+
+/* =========================================================
+   RIGHT LEG
+========================================================= */
+
+.right-leg {
+
+    top: 125px;
+
+    left: 89px;
+
+    width: 5px;
+
+    height: 72px;
+
+    border-radius: 5px;
+
+    background:
+        var(--accent-light);
+
+    transform:
+
+        rotate(-35deg);
+
+    transform-origin:
+        top center;
+
+}
+
+
+/* =========================================================
+   WORD
+========================================================= */
+
+.word {
+
+    min-height: 65px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    flex-wrap: wrap;
+
+    gap: 10px;
+
+    margin:
+        5px 0 25px;
+
+}
+
+
+.word-letter {
+
+    width: 34px;
+
+    height: 48px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border-bottom:
+        3px solid var(--accent);
+
+    color: var(--text);
+
+    font-size: 34px;
+
+    font-weight: 800;
+
+    text-transform: uppercase;
+
+}
+
+
+.word-letter.hidden-letter {
+
+    color: transparent;
+
+}
+
+
+/* =========================================================
+   KEYBOARD HINT
+========================================================= */
+
+.keyboard-hint {
+
+    width: fit-content;
+
+    margin:
+        0 auto 25px;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+
+    padding:
+        13px 20px;
+
+    border:
+        1px solid var(--border);
+
+    border-radius: 15px;
+
+    background:
+        rgba(255, 255, 255, 0.025);
+
+}
+
+
+.keyboard-icon {
+
+    font-size: 22px;
+
+}
+
+
+.keyboard-hint strong {
+
+    display: block;
+
+    font-size: 13px;
+
+}
+
+
+.keyboard-hint span {
+
+    display: block;
+
+    margin-top: 3px;
+
+    color: var(--muted);
+
+    font-size: 11px;
+
+}
+
+
+/* =========================================================
+   WRONG LETTERS
+========================================================= */
+
+.wrong-section {
+
+    text-align: center;
+
+}
+
+
+.section-title {
+
+    color: var(--muted);
+
+    font-size: 9px;
+
+    font-weight: 800;
+
+    letter-spacing: 2px;
+
+}
+
+
+.wrong-letters {
+
+    min-height: 24px;
+
+    margin-top: 8px;
+
+    color: var(--danger);
+
+    font-size: 13px;
+
+    font-weight: 700;
+
+    letter-spacing: 4px;
+
+}
+
+
+/* =========================================================
+   MESSAGE
+========================================================= */
+
+.message {
+
+    min-height: 25px;
+
+    margin-top: 15px;
+
+    text-align: center;
+
+    color: var(--muted);
+
+    font-size: 13px;
+
+}
+
+
+/* =========================================================
+   RESULT OVERLAY
+========================================================= */
+
+.game-result {
+
+    position: absolute;
+
+    inset: 0;
+
+    z-index: 20;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 20px;
+
+    border-radius: 28px;
+
+    background:
+        rgba(0, 0, 0, 0.45);
+
+    backdrop-filter:
+        blur(5px);
+
+}
+
+
+.game-result.hidden {
+
+    display: none;
+
+}
+
+
+/* =========================================================
+   RESULT POPUP
+========================================================= */
+
+.result-popup {
+
+    width:
+        min(
+            330px,
+            90%
+        );
+
+    padding:
+        25px 22px;
+
+    text-align: center;
+
+    border:
+        1px solid
+        rgba(255, 255, 255, 0.10);
+
+    border-radius: 20px;
+
+    background:
+
+        linear-gradient(
+            145deg,
+            #181b24,
+            #101218
+        );
+
+    box-shadow:
+
+        0 25px 70px
+        rgba(0, 0, 0, 0.55);
+
+    animation:
+
+        popup-in
+        0.25s ease;
+
+}
+
+
+@keyframes popup-in {
+
+    from {
+
+        opacity: 0;
+
+        transform:
+            scale(0.92)
+            translateY(8px);
+
+    }
+
+    to {
+
+        opacity: 1;
+
+        transform:
+            scale(1)
+            translateY(0);
+
+    }
+
+}
+
+
+.result-icon {
+
+    font-size: 38px;
+
+    margin-bottom: 7px;
+
+}
+
+
+.result-popup h2 {
+
+    font-size: 25px;
+
+}
+
+
+.result-popup p {
+
+    margin-top: 5px;
+
+    color: var(--muted);
+
+    font-size: 13px;
+
+}
+
+
+.result-word {
+
+    margin-top: 16px;
+
+    padding: 10px;
+
+    border-radius: 10px;
+
+    background:
+        rgba(255, 255, 255, 0.035);
+
+}
+
+
+.result-word span {
+
+    display: block;
+
+    color: var(--muted);
+
+    font-size: 8px;
+
+    font-weight: 800;
+
+    letter-spacing: 1.5px;
+
+}
+
+
+.result-word strong {
+
+    display: block;
+
+    margin-top: 4px;
+
+    color: var(--accent-light);
+
+    font-size: 20px;
+
+    letter-spacing: 2px;
+
+}
+
+
+/* =========================================================
+   FINAL SCORE
+========================================================= */
+
+.final-score {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    margin-top: 10px;
+
+    padding:
+        8px 10px;
+
+    border-radius: 9px;
+
+    background:
+        rgba(139, 92, 246, 0.08);
+
+}
+
+
+.final-score span {
+
+    color: var(--muted);
+
+    font-size: 9px;
+
+    font-weight: 700;
+
+    letter-spacing: 1px;
+
+}
+
+
+.final-score strong {
+
+    font-size: 15px;
+
+}
+
+
+/* =========================================================
+   PLAY AGAIN
+========================================================= */
+
+#restart-button {
+
+    width: 100%;
+
+    margin-top: 15px;
+
+    padding:
+        11px 20px;
+
+    border: none;
+
+    border-radius: 10px;
+
+    background:
+
+        linear-gradient(
+            135deg,
+            var(--accent),
+            var(--blue)
+        );
+
+    color: white;
+
+    font-size: 10px;
+
+    font-weight: 800;
+
+    letter-spacing: 1.3px;
+
+    cursor: pointer;
+
+    transition:
+
+        transform 0.2s ease,
+
+        box-shadow 0.2s ease;
+
+}
+
+
+#restart-button:hover {
+
+    transform:
+        translateY(-1px);
+
+    box-shadow:
+
+        0 8px 25px
+        rgba(139, 92, 246, 0.30);
+
+}
+
+
+/* =========================================================
+   FOOTER
+========================================================= */
+
+footer {
+
+    display: flex;
+
+    justify-content: center;
+
+    gap: 10px;
+
+    margin-top: 18px;
+
+    color: var(--muted);
+
+    font-size: 9px;
+
+    letter-spacing: 1.5px;
+
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (
+    max-width: 650px
+) {
+
+
+    .app {
+
+        width: 94%;
+
+        padding-top: 20px;
+
+    }
+
+
+    .top-bar {
+
+        align-items: flex-start;
+
+        gap: 15px;
+
+    }
+
+
+    .scoreboard {
+
+        gap: 4px;
+
+    }
+
+
+    .score-item {
+
+        min-width: 58px;
+
+        padding:
+            7px 8px;
+
+    }
+
+
+    .score-item span {
+
+        font-size: 7px;
+
+    }
+
+
+    .score-item strong {
+
+        font-size: 14px;
+
+    }
+
+
+    .game-card {
+
+        padding:
+            25px 18px;
+
+        border-radius: 22px;
+
+    }
+
+
+    .hangman-container {
+
+        height: 230px;
+
+    }
+
+
+    .word {
+
+        gap: 6px;
+
+    }
+
+
+    .word-letter {
+
+        width: 25px;
+
+        height: 42px;
+
+        font-size: 27px;
+
+    }
+
+
+    .keyboard-hint {
+
+        padding:
+            11px 14px;
+
+    }
+
+
+    footer {
+
+        flex-wrap: wrap;
+
+        line-height: 20px;
+
+    }
+
+}

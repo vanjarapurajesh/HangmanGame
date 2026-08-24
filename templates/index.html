@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="description"
+        content="Premium modern Hangman word guessing game."
+    >
+
+    <title>
+        Hangman — Word Challenge
+    </title>
+
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/style.css') }}"
+    >
+
+</head>
+
+
+<body>
+
+
+    <main class="app">
+
+
+        <!-- =================================================
+             TOP BAR
+        ================================================== -->
+
+        <header class="top-bar">
+
+
+            <!-- BRAND -->
+
+            <div class="brand">
+
+                <div class="brand-logo">
+                    H
+                </div>
+
+
+                <div class="brand-text">
+
+                    <h1>
+                        HANGMAN
+                    </h1>
+
+                    <span>
+                        WORD CHALLENGE
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <!-- SCOREBOARD -->
+
+            <div class="scoreboard">
+
+
+                <div class="score-item">
+
+                    <span>
+                        SCORE
+                    </span>
+
+                    <strong id="score">
+                        —
+                    </strong>
+
+                </div>
+
+
+                <div class="score-item">
+
+                    <span>
+                        BEST
+                    </span>
+
+                    <strong id="best-score">
+                        —
+                    </strong>
+
+                </div>
+
+
+                <div class="score-item">
+
+                    <span>
+                        CHANCES
+                    </span>
+
+                    <strong id="chances">
+                        10
+                    </strong>
+
+                </div>
+
+
+            </div>
+
+
+        </header>
+
+
+        <!-- =================================================
+             GAME CARD
+        ================================================== -->
+
+        <section class="game-card">
+
+
+            <!-- GAME TITLE -->
+
+            <div class="game-header">
+
+
+                <div>
+
+                    <span class="eyebrow">
+                        GUESS THE WORD
+                    </span>
+
+
+                    <h2>
+                        Can you solve it?
+                    </h2>
+
+                </div>
+
+
+                <div class="word-info">
+
+                    <span>
+                        LETTERS
+                    </span>
+
+                    <strong id="word-length">
+                        —
+                    </strong>
+
+                </div>
+
+
+            </div>
+
+
+            <!-- PROGRESS BAR -->
+
+            <div class="progress-container">
+
+                <div
+                    id="progress-bar"
+                    class="progress-bar"
+                ></div>
+
+            </div>
+
+
+            <!-- =================================================
+                 HANGMAN
+                 ONLY THE PERSON
+                 NO GALLOWS
+            ================================================== -->
+
+            <div class="hangman-container">
+
+
+                <div class="hangman">
+
+
+                    <div
+                        id="head"
+                        class="hangman-part head"
+                    ></div>
+
+
+                    <div
+                        id="body"
+                        class="hangman-part body"
+                    ></div>
+
+
+                    <div
+                        id="left-arm"
+                        class="hangman-part left-arm"
+                    ></div>
+
+
+                    <div
+                        id="right-arm"
+                        class="hangman-part right-arm"
+                    ></div>
+
+
+                    <div
+                        id="left-leg"
+                        class="hangman-part left-leg"
+                    ></div>
+
+
+                    <div
+                        id="right-leg"
+                        class="hangman-part right-leg"
+                    ></div>
+
+
+                </div>
+
+
+            </div>
+
+
+            <!-- =================================================
+                 WORD
+            ================================================== -->
+
+            <div
+                id="word"
+                class="word"
+            ></div>
+
+
+            <!-- =================================================
+                 KEYBOARD HINT
+            ================================================== -->
+
+            <div class="keyboard-hint">
+
+
+                <div class="keyboard-icon">
+                    ⌨
+                </div>
+
+
+                <div>
+
+                    <strong>
+                        Use your keyboard
+                    </strong>
+
+
+                    <span>
+                        Type a letter to make your guess
+                    </span>
+
+                </div>
+
+
+            </div>
+
+
+            <!-- =================================================
+                 WRONG LETTERS
+            ================================================== -->
+
+            <div class="wrong-section">
+
+
+                <span class="section-title">
+                    WRONG LETTERS
+                </span>
+
+
+                <div
+                    id="wrong-letters"
+                    class="wrong-letters"
+                >
+                    None
+                </div>
+
+
+            </div>
+
+
+            <!-- MESSAGE -->
+
+            <div
+                id="message"
+                class="message"
+            ></div>
+
+
+            <!-- =================================================
+                 RESULT POPUP
+            ================================================== -->
+
+            <div
+                id="game-result"
+                class="game-result hidden"
+            >
+
+
+                <div class="result-popup">
+
+
+                    <div
+                        id="result-icon"
+                        class="result-icon"
+                    >
+                        🎉
+                    </div>
+
+
+                    <h2
+                        id="result-title"
+                    >
+                        You Win!
+                    </h2>
+
+
+                    <p
+                        id="result-text"
+                    >
+                        Excellent!
+                    </p>
+
+
+                    <div class="result-word">
+
+
+                        <span>
+                            THE WORD WAS
+                        </span>
+
+
+                        <strong
+                            id="answer"
+                        >
+                            —
+                        </strong>
+
+
+                    </div>
+
+
+                    <div class="final-score">
+
+
+                        <span>
+                            SCORE
+                        </span>
+
+
+                        <strong
+                            id="final-score"
+                        >
+                            —
+                        </strong>
+
+
+                    </div>
+
+
+                    <button
+                        id="restart-button"
+                        type="button"
+                    >
+                        PLAY AGAIN
+                    </button>
+
+
+                </div>
+
+
+            </div>
+
+
+        </section>
+
+
+        <!-- =================================================
+             FOOTER
+        ================================================== -->
+
+        <footer>
+
+
+            <span>
+                HANGMAN
+            </span>
+
+
+            <span>
+                •
+            </span>
+
+
+            <span>
+                10 CHANCES
+            </span>
+
+
+            <span>
+                •
+            </span>
+
+
+            <span>
+                KEYBOARD ONLY
+            </span>
+
+
+        </footer>
+
+
+    </main>
+
+
+    <script
+        src="{{ url_for('static', filename='js/game.js') }}"
+    ></script>
+
+
+</body>
+
+</html>
