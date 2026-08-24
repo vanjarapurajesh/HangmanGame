@@ -2,7 +2,7 @@
 
 
 // =========================================================
-// ELEMENTS
+// HTML ELEMENTS
 // =========================================================
 
 const wordElement =
@@ -19,9 +19,6 @@ const wrongLettersElement =
 
 const messageElement =
     document.getElementById("message");
-
-const progressBar =
-    document.getElementById("progress-bar");
 
 const scoreElement =
     document.getElementById("score");
@@ -58,7 +55,7 @@ const guessButton =
 
 
 // =========================================================
-// HANGMAN PARTS
+// HANGMAN BODY PARTS
 // =========================================================
 
 const bodyParts = [
@@ -79,14 +76,14 @@ const bodyParts = [
 
 
 // =========================================================
-// GAME STATE
+// GAME STATUS
 // =========================================================
 
 let gameFinished = false;
 
 
 // =========================================================
-// BEST SCORE
+// GET BEST SCORE
 // =========================================================
 
 function getBestScore() {
@@ -110,7 +107,7 @@ function updateScore(score) {
 
 
     /*
-        Never display 0.
+        Do not display 0.
     */
 
     if (score > 0) {
@@ -130,6 +127,10 @@ function updateScore(score) {
         getBestScore();
 
 
+    /*
+        Save new best score.
+    */
+
     if (score > oldBest) {
 
         localStorage.setItem(
@@ -140,17 +141,17 @@ function updateScore(score) {
     }
 
 
-    const best =
+    const bestScore =
         Math.max(
             score,
             oldBest
         );
 
 
-    if (best > 0) {
+    if (bestScore > 0) {
 
         bestScoreElement.textContent =
-            best;
+            bestScore;
 
     } else {
 
@@ -182,7 +183,7 @@ async function loadGame() {
         if (!response.ok) {
 
             throw new Error(
-                "Could not load game."
+                "Failed to load game."
             );
 
         }
@@ -192,7 +193,9 @@ async function loadGame() {
             await response.json();
 
 
-        updateGame(game);
+        updateGame(
+            game
+        );
 
 
     } catch (error) {
@@ -204,7 +207,7 @@ async function loadGame() {
 
 
         showMessage(
-            "Unable to connect to the server."
+            "Unable to connect to Flask."
         );
 
     }
@@ -234,11 +237,6 @@ function updateGame(game) {
 
     renderWrongLetters(
         game.wrong_letters
-    );
-
-
-    updateProgress(
-        game
     );
 
 
@@ -274,7 +272,7 @@ function updateGame(game) {
 
 
 // =========================================================
-// RENDER WORD
+// DISPLAY WORD
 // =========================================================
 
 function renderWord(word) {
@@ -326,7 +324,7 @@ function renderWord(word) {
 
 
 // =========================================================
-// WRONG LETTERS
+// DISPLAY WRONG LETTERS
 // =========================================================
 
 function renderWrongLetters(
@@ -365,31 +363,7 @@ function renderWrongLetters(
 
 
 // =========================================================
-// PROGRESS BAR
-// =========================================================
-
-function updateProgress(game) {
-
-
-    const percentage =
-
-        (
-
-            game.remaining_chances /
-
-            game.max_wrong_guesses
-
-        ) * 100;
-
-
-    progressBar.style.width =
-        `${percentage}%`;
-
-}
-
-
-// =========================================================
-// HANGMAN
+// DRAW HANGMAN
 // =========================================================
 
 function updateHangman(
@@ -398,8 +372,10 @@ function updateHangman(
 
 
     /*
-        10 chances
-        6 body parts
+        We have 10 chances
+        and 6 body parts.
+
+        The person appears gradually.
     */
 
     const partsToShow =
@@ -407,11 +383,7 @@ function updateHangman(
         Math.ceil(
 
             (
-
-                wrongGuesses /
-
-                10
-
+                wrongGuesses / 10
             ) * bodyParts.length
 
         );
@@ -468,6 +440,10 @@ async function submitGuess() {
     }
 
 
+    /*
+        Read input.
+    */
+
     const letter =
         guessInput.value
             .trim()
@@ -475,7 +451,7 @@ async function submitGuess() {
 
 
     /*
-        Only one alphabetic character.
+        Validate.
     */
 
     if (
@@ -496,7 +472,10 @@ async function submitGuess() {
 
 
         /*
-            Keep focus on mobile.
+            Return focus.
+
+            On mobile this keeps the input
+            ready for the system keyboard.
         */
 
         guessInput.focus();
@@ -508,13 +487,14 @@ async function submitGuess() {
 
 
     /*
-        Disable controls while
-        request is being processed.
+        Disable while waiting.
     */
 
-    guessInput.disabled = true;
+    guessInput.disabled =
+        true;
 
-    guessButton.disabled = true;
+    guessButton.disabled =
+        true;
 
 
     try {
@@ -554,7 +534,7 @@ async function submitGuess() {
         if (!response.ok) {
 
             throw new Error(
-                `Server error: ${response.status}`
+                `Server error ${response.status}`
             );
 
         }
@@ -571,7 +551,7 @@ async function submitGuess() {
 
 
         /*
-            Show message.
+            Display message.
         */
 
         showMessage(
@@ -593,14 +573,13 @@ async function submitGuess() {
 
 
         /*
-            Show answer only after
-            game finishes.
+            Reveal answer only
+            when game is finished.
         */
 
         if (result.answer) {
 
             answerElement.textContent =
-
                 result.answer.toUpperCase();
 
         }
@@ -638,11 +617,10 @@ async function submitGuess() {
 
 
         /*
-            Very important for mobile:
-            return focus to the input.
+            Keep input focused
+            while the game continues.
 
-            This means the user can continue
-            typing without reopening the field.
+            This is important for mobile.
         */
 
         if (!gameFinished) {
@@ -661,15 +639,8 @@ async function submitGuess() {
 // =========================================================
 
 guessButton.addEventListener(
-
     "click",
-
-    function() {
-
-        submitGuess();
-
-    }
-
+    submitGuess
 );
 
 
@@ -678,11 +649,8 @@ guessButton.addEventListener(
 // =========================================================
 
 guessInput.addEventListener(
-
     "keydown",
-
     function(event) {
-
 
         if (
             event.key === "Enter"
@@ -695,23 +663,20 @@ guessInput.addEventListener(
         }
 
     }
-
 );
 
 
 // =========================================================
-// INPUT CLEANUP
+// INPUT CONTROL
 // =========================================================
 
 guessInput.addEventListener(
-
     "input",
-
     function() {
 
 
         /*
-            Keep only the latest A-Z character.
+            Only A-Z characters.
         */
 
         let value =
@@ -726,7 +691,13 @@ guessInput.addEventListener(
             );
 
 
-        if (value.length > 1) {
+        /*
+            Keep only one character.
+        */
+
+        if (
+            value.length > 1
+        ) {
 
             value =
                 value.slice(-1);
@@ -738,7 +709,6 @@ guessInput.addEventListener(
             value;
 
     }
-
 );
 
 
@@ -754,7 +724,13 @@ function showResult(game) {
     );
 
 
-    if (game.score > 0) {
+    /*
+        Never show zero.
+    */
+
+    if (
+        game.score > 0
+    ) {
 
         finalScoreElement.textContent =
             game.score;
@@ -766,6 +742,10 @@ function showResult(game) {
 
     }
 
+
+    /*
+        WIN
+    */
 
     if (game.won) {
 
@@ -782,7 +762,14 @@ function showResult(game) {
             "Excellent! You found the word.";
 
 
-    } else {
+    }
+
+
+    /*
+        LOSS
+    */
+
+    else {
 
 
         resultIcon.textContent =
@@ -802,13 +789,11 @@ function showResult(game) {
 
 
 // =========================================================
-// RESTART
+// RESTART GAME
 // =========================================================
 
 restartButton.addEventListener(
-
     "click",
-
     async function() {
 
 
@@ -864,14 +849,7 @@ restartButton.addEventListener(
 
 
             /*
-                Focus input.
-
-                On desktop this is immediate.
-
-                On mobile, the user can tap the
-                input if the browser doesn't reopen
-                the keyboard automatically after
-                the popup button click.
+                Focus input after restart.
             */
 
             guessInput.focus();
@@ -893,17 +871,14 @@ restartButton.addEventListener(
         }
 
     }
-
 );
 
 
 // =========================================================
-// MESSAGE
+// SHOW MESSAGE
 // =========================================================
 
-function showMessage(
-    message
-) {
+function showMessage(message) {
 
     messageElement.textContent =
         message;
