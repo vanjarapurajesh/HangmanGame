@@ -2,18 +2,14 @@
 <html lang="en">
 
 <head>
-
     <meta charset="UTF-8">
 
     <meta
         name="viewport"
-        content="width=device-width, initial-scale=1.0"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
     >
 
-    <meta
-        name="theme-color"
-        content="#08090d"
-    >
+    <meta name="theme-color" content="#08090d">
 
     <title>Hangman — Word Challenge</title>
 
@@ -21,20 +17,15 @@
         rel="stylesheet"
         href="{{ url_for('static', filename='css/style.css') }}"
     >
-
 </head>
 
 
 <body>
 
-
 <main class="app">
 
-
     <!-- HEADER -->
-
     <header class="top-bar">
-
 
         <div class="brand">
 
@@ -43,64 +34,42 @@
             </div>
 
             <div class="brand-text">
-
                 <h1>HANGMAN</h1>
-
                 <span>WORD CHALLENGE</span>
-
             </div>
 
         </div>
 
 
         <!-- SCOREBOARD -->
-
         <div class="scoreboard">
 
-
             <div class="score-item">
-
                 <span>SCORE</span>
-
                 <strong id="score">—</strong>
-
             </div>
 
-
             <div class="score-item">
-
                 <span>BEST</span>
-
                 <strong id="best-score">—</strong>
-
             </div>
-
 
             <div class="score-item">
-
                 <span>CHANCES</span>
-
                 <strong id="chances">10</strong>
-
             </div>
-
 
         </div>
-
 
     </header>
 
 
-
-    <!-- GAME -->
-
+    <!-- GAME CARD -->
     <section class="game-card">
 
 
-        <!-- TITLE -->
-
+        <!-- GAME HEADER -->
         <div class="game-header">
-
 
             <div>
 
@@ -125,100 +94,141 @@
 
             </div>
 
-
         </div>
 
 
-
         <!-- HANGMAN -->
-
         <div class="hangman-container">
 
-
             <div class="hangman">
-
 
                 <div
                     id="head"
                     class="hangman-part head"
                 ></div>
 
-
                 <div
                     id="body"
                     class="hangman-part body"
                 ></div>
-
 
                 <div
                     id="left-arm"
                     class="hangman-part left-arm"
                 ></div>
 
-
                 <div
                     id="right-arm"
                     class="hangman-part right-arm"
                 ></div>
-
 
                 <div
                     id="left-leg"
                     class="hangman-part left-leg"
                 ></div>
 
-
                 <div
                     id="right-leg"
                     class="hangman-part right-leg"
                 ></div>
 
-
             </div>
-
 
         </div>
 
 
-
         <!-- WORD -->
-
         <div
             id="word"
             class="word"
             tabindex="0"
             role="button"
-            aria-label="Tap here to open keyboard"
+            aria-label="Word"
         ></div>
 
 
+        <!--
+            Invisible input.
 
-        <!-- INVISIBLE SYSTEM KEYBOARD INPUT -->
+            This is NOT used to open the system keyboard.
+            JavaScript prevents the mobile system keyboard
+            from being used.
 
+            It exists only as a safe keyboard event target.
+        -->
         <input
             id="keyboard-input"
             class="keyboard-input"
             type="text"
-            inputmode="latin"
+            inputmode="none"
             autocomplete="off"
             autocorrect="off"
-            autocapitalize="characters"
+            autocapitalize="none"
             spellcheck="false"
-            maxlength="1"
-            aria-label="Enter a letter"
+            readonly
+            aria-hidden="true"
         >
 
 
+        <!-- MOBILE KEYBOARD -->
+        <div
+            id="mobile-keyboard"
+            class="mobile-keyboard"
+            aria-label="On screen keyboard"
+        >
+
+            <div class="keyboard-row">
+
+                <button type="button" data-letter="q">Q</button>
+                <button type="button" data-letter="w">W</button>
+                <button type="button" data-letter="e">E</button>
+                <button type="button" data-letter="r">R</button>
+                <button type="button" data-letter="t">T</button>
+                <button type="button" data-letter="y">Y</button>
+                <button type="button" data-letter="u">U</button>
+                <button type="button" data-letter="i">I</button>
+                <button type="button" data-letter="o">O</button>
+                <button type="button" data-letter="p">P</button>
+
+            </div>
+
+
+            <div class="keyboard-row">
+
+                <button type="button" data-letter="a">A</button>
+                <button type="button" data-letter="s">S</button>
+                <button type="button" data-letter="d">D</button>
+                <button type="button" data-letter="f">F</button>
+                <button type="button" data-letter="g">G</button>
+                <button type="button" data-letter="h">H</button>
+                <button type="button" data-letter="j">J</button>
+                <button type="button" data-letter="k">K</button>
+                <button type="button" data-letter="l">L</button>
+
+            </div>
+
+
+            <div class="keyboard-row">
+
+                <button type="button" data-letter="z">Z</button>
+                <button type="button" data-letter="x">X</button>
+                <button type="button" data-letter="c">C</button>
+                <button type="button" data-letter="v">V</button>
+                <button type="button" data-letter="b">B</button>
+                <button type="button" data-letter="n">N</button>
+                <button type="button" data-letter="m">M</button>
+
+            </div>
+
+        </div>
+
 
         <!-- WRONG LETTERS -->
-
         <div class="wrong-section">
-
 
             <span class="section-title">
                 WRONG LETTERS
             </span>
-
 
             <div
                 id="wrong-letters"
@@ -227,30 +237,23 @@
                 None
             </div>
 
-
         </div>
 
 
-
         <!-- MESSAGE -->
-
         <div
             id="message"
             class="message"
         ></div>
 
 
-
         <!-- RESULT POPUP -->
-
         <div
             id="game-result"
             class="game-result hidden"
         >
 
-
             <div class="result-popup">
-
 
                 <div
                     id="result-icon"
@@ -259,16 +262,13 @@
                     🎉
                 </div>
 
-
                 <h2 id="result-title">
                     You Win!
                 </h2>
 
-
                 <p id="result-text">
                     Excellent! You found the word.
                 </p>
-
 
                 <div class="result-word">
 
@@ -282,7 +282,6 @@
 
                 </div>
 
-
                 <div class="final-score">
 
                     <span>
@@ -295,7 +294,6 @@
 
                 </div>
 
-
                 <button
                     id="restart-button"
                     type="button"
@@ -303,19 +301,14 @@
                     PLAY AGAIN
                 </button>
 
-
             </div>
 
-
         </div>
-
 
     </section>
 
 
-
     <!-- FOOTER -->
-
     <footer>
 
         <span>HANGMAN</span>
@@ -326,10 +319,11 @@
 
         <span>•</span>
 
-        <span>SYSTEM KEYBOARD</span>
+        <span id="keyboard-status">
+            SYSTEM KEYBOARD
+        </span>
 
     </footer>
-
 
 </main>
 
@@ -337,7 +331,6 @@
 <script
     src="{{ url_for('static', filename='js/game.js') }}"
 ></script>
-
 
 </body>
 
