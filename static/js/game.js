@@ -2,11 +2,14 @@
 
 
 // =========================================================
-// HTML ELEMENTS
+// ELEMENTS
 // =========================================================
 
 const wordElement =
     document.getElementById("word");
+
+const keyboardInput =
+    document.getElementById("keyboard-input");
 
 const chancesElement =
     document.getElementById("chances");
@@ -47,15 +50,9 @@ const finalScoreElement =
 const restartButton =
     document.getElementById("restart-button");
 
-const guessInput =
-    document.getElementById("guess-input");
-
-const guessButton =
-    document.getElementById("guess-button");
-
 
 // =========================================================
-// HANGMAN BODY PARTS
+// HANGMAN PARTS
 // =========================================================
 
 const bodyParts = [
@@ -76,14 +73,16 @@ const bodyParts = [
 
 
 // =========================================================
-// GAME STATUS
+// STATE
 // =========================================================
 
 let gameFinished = false;
 
+let submitting = false;
+
 
 // =========================================================
-// GET BEST SCORE
+// BEST SCORE
 // =========================================================
 
 function getBestScore() {
@@ -100,14 +99,14 @@ function getBestScore() {
 
 
 // =========================================================
-// UPDATE SCORE
+// SCORE
 // =========================================================
 
 function updateScore(score) {
 
 
     /*
-        Do not display 0.
+        Never show zero.
     */
 
     if (score > 0) {
@@ -127,10 +126,6 @@ function updateScore(score) {
         getBestScore();
 
 
-    /*
-        Save new best score.
-    */
-
     if (score > oldBest) {
 
         localStorage.setItem(
@@ -141,17 +136,17 @@ function updateScore(score) {
     }
 
 
-    const bestScore =
+    const best =
         Math.max(
             score,
             oldBest
         );
 
 
-    if (bestScore > 0) {
+    if (best > 0) {
 
         bestScoreElement.textContent =
-            bestScore;
+            best;
 
     } else {
 
@@ -164,12 +159,124 @@ function updateScore(score) {
 
 
 // =========================================================
+// OPEN SYSTEM KEYBOARD
+// =========================================================
+
+function openKeyboard() {
+
+
+    if (gameFinished) {
+
+        return;
+
+    }
+
+
+    keyboardInput.value = "";
+
+
+    /*
+        Focus happens because this function
+        is triggered by a real user tap.
+    */
+
+    keyboardInput.focus();
+
+}
+
+
+// =========================================================
+// CLICK BLANKS
+// =========================================================
+
+wordElement.addEventListener(
+    "click",
+    function() {
+
+        openKeyboard();
+
+    }
+);
+
+
+// =========================================================
+// KEYBOARD INPUT
+// =========================================================
+
+keyboardInput.addEventListener(
+    "input",
+    function() {
+
+
+        if (gameFinished) {
+
+            keyboardInput.value = "";
+
+            return;
+
+        }
+
+
+        let letter =
+            keyboardInput.value
+                .toLowerCase();
+
+
+        /*
+            Only English letters.
+        */
+
+        letter =
+            letter.replace(
+                /[^a-z]/g,
+                ""
+            );
+
+
+        /*
+            Only one character.
+        */
+
+        if (
+            letter.length > 1
+        ) {
+
+            letter =
+                letter.slice(-1);
+
+        }
+
+
+        keyboardInput.value =
+            letter;
+
+
+        /*
+            Automatically submit.
+        */
+
+        if (
+            letter.length === 1
+        ) {
+
+            submitGuess(
+                letter
+            );
+
+        }
+
+    }
+);
+
+
+// =========================================================
 // LOAD GAME
 // =========================================================
 
 async function loadGame() {
 
     try {
+
 
         const response =
             await fetch(
@@ -183,7 +290,7 @@ async function loadGame() {
         if (!response.ok) {
 
             throw new Error(
-                "Failed to load game."
+                "Unable to load game."
             );
 
         }
@@ -200,8 +307,8 @@ async function loadGame() {
 
     } catch (error) {
 
+
         console.error(
-            "LOAD ERROR:",
             error
         );
 
@@ -272,7 +379,7 @@ function updateGame(game) {
 
 
 // =========================================================
-// DISPLAY WORD
+// RENDER WORD
 // =========================================================
 
 function renderWord(word) {
@@ -297,7 +404,9 @@ function renderWord(word) {
         );
 
 
-        if (letter === "_") {
+        if (
+            letter === "_"
+        ) {
 
             element.textContent =
                 "_";
@@ -324,20 +433,17 @@ function renderWord(word) {
 
 
 // =========================================================
-// DISPLAY WRONG LETTERS
+// WRONG LETTERS
 // =========================================================
 
 function renderWrongLetters(
-    wrongLetters
+    letters
 ) {
 
 
     if (
-
-        !wrongLetters ||
-
-        wrongLetters.length === 0
-
+        !letters ||
+        letters.length === 0
     ) {
 
         wrongLettersElement.textContent =
@@ -350,7 +456,7 @@ function renderWrongLetters(
 
     wrongLettersElement.textContent =
 
-        wrongLetters
+        letters
 
             .map(
                 letter =>
@@ -363,7 +469,7 @@ function renderWrongLetters(
 
 
 // =========================================================
-// DRAW HANGMAN
+// HANGMAN
 // =========================================================
 
 function updateHangman(
@@ -372,10 +478,10 @@ function updateHangman(
 
 
     /*
-        We have 10 chances
-        and 6 body parts.
+        10 chances.
 
-        The person appears gradually.
+        The six body parts appear
+        gradually as mistakes increase.
     */
 
     const partsToShow =
@@ -384,7 +490,8 @@ function updateHangman(
 
             (
                 wrongGuesses / 10
-            ) * bodyParts.length
+            ) *
+            bodyParts.length
 
         );
 
@@ -430,71 +537,25 @@ function updateHangman(
 // SUBMIT GUESS
 // =========================================================
 
-async function submitGuess() {
+async function submitGuess(
+    letter
+) {
 
-
-    if (gameFinished) {
-
-        return;
-
-    }
-
-
-    /*
-        Read input.
-    */
-
-    const letter =
-        guessInput.value
-            .trim()
-            .toLowerCase();
-
-
-    /*
-        Validate.
-    */
 
     if (
-
-        letter.length !== 1 ||
-
-        !/^[a-z]$/.test(letter)
-
+        gameFinished ||
+        submitting
     ) {
-
-
-        showMessage(
-            "Enter one letter."
-        );
-
-
-        guessInput.value = "";
-
-
-        /*
-            Return focus.
-
-            On mobile this keeps the input
-            ready for the system keyboard.
-        */
-
-        guessInput.focus();
-
 
         return;
 
     }
 
 
-    /*
-        Disable while waiting.
-    */
+    submitting = true;
 
-    guessInput.disabled =
-        true;
 
-    guessButton.disabled =
-        true;
+    keyboardInput.value = "";
 
 
     try {
@@ -534,7 +595,7 @@ async function submitGuess() {
         if (!response.ok) {
 
             throw new Error(
-                `Server error ${response.status}`
+                `Server error: ${response.status}`
             );
 
         }
@@ -544,24 +605,10 @@ async function submitGuess() {
             await response.json();
 
 
-        console.log(
-            "GUESS RESULT:",
-            result
-        );
-
-
-        /*
-            Display message.
-        */
-
         showMessage(
             result.message
         );
 
-
-        /*
-            Update game.
-        */
 
         if (result.game) {
 
@@ -571,11 +618,6 @@ async function submitGuess() {
 
         }
 
-
-        /*
-            Reveal answer only
-            when game is finished.
-        */
 
         if (result.answer) {
 
@@ -598,36 +640,29 @@ async function submitGuess() {
             "Something went wrong. Check Flask."
         );
 
-
-    } finally {
-
-
-        /*
-            Clear input.
-        */
-
-        guessInput.value = "";
+    }
 
 
-        guessInput.disabled =
-            false;
-
-        guessButton.disabled =
-            false;
+    submitting = false;
 
 
-        /*
-            Keep input focused
-            while the game continues.
+    /*
+        Keep the system keyboard ready
+        for the next letter.
 
-            This is important for mobile.
-        */
+        Do NOT do this after game ends.
+    */
 
-        if (!gameFinished) {
+    if (!gameFinished) {
 
-            guessInput.focus();
+        setTimeout(
+            function() {
 
-        }
+                keyboardInput.focus();
+
+            },
+            50
+        );
 
     }
 
@@ -635,85 +670,7 @@ async function submitGuess() {
 
 
 // =========================================================
-// GUESS BUTTON
-// =========================================================
-
-guessButton.addEventListener(
-    "click",
-    submitGuess
-);
-
-
-// =========================================================
-// ENTER KEY
-// =========================================================
-
-guessInput.addEventListener(
-    "keydown",
-    function(event) {
-
-        if (
-            event.key === "Enter"
-        ) {
-
-            event.preventDefault();
-
-            submitGuess();
-
-        }
-
-    }
-);
-
-
-// =========================================================
-// INPUT CONTROL
-// =========================================================
-
-guessInput.addEventListener(
-    "input",
-    function() {
-
-
-        /*
-            Only A-Z characters.
-        */
-
-        let value =
-            guessInput.value
-                .toLowerCase();
-
-
-        value =
-            value.replace(
-                /[^a-z]/g,
-                ""
-            );
-
-
-        /*
-            Keep only one character.
-        */
-
-        if (
-            value.length > 1
-        ) {
-
-            value =
-                value.slice(-1);
-
-        }
-
-
-        guessInput.value =
-            value;
-
-    }
-);
-
-
-// =========================================================
-// RESULT POPUP
+// RESULT
 // =========================================================
 
 function showResult(game) {
@@ -723,10 +680,6 @@ function showResult(game) {
         "hidden"
     );
 
-
-    /*
-        Never show zero.
-    */
 
     if (
         game.score > 0
@@ -743,11 +696,9 @@ function showResult(game) {
     }
 
 
-    /*
-        WIN
-    */
-
-    if (game.won) {
+    if (
+        game.won
+    ) {
 
 
         resultIcon.textContent =
@@ -762,14 +713,7 @@ function showResult(game) {
             "Excellent! You found the word.";
 
 
-    }
-
-
-    /*
-        LOSS
-    */
-
-    else {
+    } else {
 
 
         resultIcon.textContent =
@@ -789,7 +733,21 @@ function showResult(game) {
 
 
 // =========================================================
-// RESTART GAME
+// MESSAGE
+// =========================================================
+
+function showMessage(
+    message
+) {
+
+    messageElement.textContent =
+        message;
+
+}
+
+
+// =========================================================
+// RESTART
 // =========================================================
 
 restartButton.addEventListener(
@@ -849,11 +807,11 @@ restartButton.addEventListener(
 
 
             /*
-                Focus input after restart.
+                Don't automatically open
+                the keyboard after restart.
+
+                User taps the blanks.
             */
-
-            guessInput.focus();
-
 
         } catch (error) {
 
@@ -865,25 +823,13 @@ restartButton.addEventListener(
 
 
             showMessage(
-                "Unable to restart the game."
+                "Unable to restart."
             );
 
         }
 
     }
 );
-
-
-// =========================================================
-// SHOW MESSAGE
-// =========================================================
-
-function showMessage(message) {
-
-    messageElement.textContent =
-        message;
-
-}
 
 
 // =========================================================
