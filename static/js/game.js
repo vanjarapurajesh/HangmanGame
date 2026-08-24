@@ -225,9 +225,7 @@ async function loadGame() {
             await response.json();
 
 
-        updateGame(
-            game
-        );
+        updateGame(game);
 
 
     } catch (error) {
@@ -276,10 +274,24 @@ function updateGame(game) {
     );
 
 
-    updateKeyboard(
-        game.guessed_letters,
-        game.wrong_letters
-    );
+    /*
+        IMPORTANT:
+        Keep all previously guessed letters.
+    */
+
+    guessedLetters =
+        new Set(
+            game.guessed_letters || []
+        );
+
+
+    wrongLetters =
+        new Set(
+            game.wrong_letters || []
+        );
+
+
+    updateKeyboard();
 
 
     updateScore(
@@ -443,22 +455,7 @@ function updateHangman(
    UPDATE MOBILE KEYBOARD
 ========================================================= */
 
-function updateKeyboard(
-    guessed,
-    wrong
-) {
-
-    guessedLetters =
-        new Set(
-            guessed || []
-        );
-
-
-    wrongLetters =
-        new Set(
-            wrong || []
-        );
-
+function updateKeyboard() {
 
     keyboardButtons.forEach(
         button => {
@@ -467,10 +464,32 @@ function updateKeyboard(
                 button.dataset.letter;
 
 
+            /*
+                Remove old states.
+            */
+
             button.classList.remove(
                 "used",
                 "correct",
                 "wrong"
+            );
+
+
+            /*
+                IMPORTANT:
+                Do NOT disable the button.
+
+                We need it clickable again so
+                we can show the repeated guess
+                message.
+            */
+
+            button.disabled =
+                false;
+
+
+            button.removeAttribute(
+                "aria-disabled"
             );
 
 
@@ -512,32 +531,47 @@ function updateKeyboard(
 
 
 /* =========================================================
-   FAST MOBILE BUTTON FEEDBACK
+   REPEATED GUESS MESSAGE
 ========================================================= */
 
-function markButtonImmediately(
-    button,
+function repeatedGuess(
     letter
 ) {
 
+    showMessage(
+        `"${letter.toUpperCase()}" was already guessed!`
+    );
+
+
     /*
-        React visually BEFORE Flask responds.
-        This makes the keyboard feel instant.
+        Small visual feedback.
     */
 
-    button.classList.add(
-        "used"
-    );
+    const button =
+        document.querySelector(
+            `[data-letter="${letter}"]`
+        );
 
 
-    button.disabled =
-        true;
+    if (button) {
+
+        button.classList.remove(
+            "repeat-shake"
+        );
 
 
-    button.setAttribute(
-        "aria-disabled",
-        "true"
-    );
+        /*
+            Force browser to restart animation.
+        */
+
+        void button.offsetWidth;
+
+
+        button.classList.add(
+            "repeat-shake"
+        );
+
+    }
 
 }
 
@@ -557,8 +591,7 @@ keyboardButtons.forEach(
 
 
                 if (
-                    gameFinished ||
-                    submitting
+                    gameFinished
                 ) {
 
                     return;
@@ -571,7 +604,8 @@ keyboardButtons.forEach(
 
 
                 /*
-                    Ignore already-used letters.
+                    CHECK REPEATED GUESS
+                    BEFORE submitting.
                 */
 
                 if (
@@ -580,18 +614,36 @@ keyboardButtons.forEach(
                     )
                 ) {
 
+                    repeatedGuess(
+                        letter
+                    );
+
                     return;
 
                 }
 
 
                 /*
-                    INSTANT visual reaction.
+                    Prevent another request
+                    while current request is
+                    being processed.
                 */
 
-                markButtonImmediately(
-                    button,
-                    letter
+                if (
+                    submitting
+                ) {
+
+                    return;
+
+                }
+
+
+                /*
+                    Immediate visual feedback.
+                */
+
+                button.classList.add(
+                    "used"
                 );
 
 
@@ -615,6 +667,11 @@ document.addEventListener(
     "keydown",
     function(event) {
 
+        /*
+            Mobile uses only the on-screen
+            keyboard.
+        */
+
         if (
             isMobileDevice()
         ) {
@@ -625,8 +682,7 @@ document.addEventListener(
 
 
         if (
-            gameFinished ||
-            submitting
+            gameFinished
         ) {
 
             return;
@@ -650,31 +706,52 @@ document.addEventListener(
 
 
         if (
-            /^[a-z]$/.test(
+            !/^[a-z]$/.test(
                 letter
             )
         ) {
 
-            event.preventDefault();
-
-
-            if (
-                guessedLetters.has(
-                    letter
-                )
-            ) {
-
-                return;
-
-            }
-
-
-            submitGuess(
-                letter,
-                null
-            );
+            return;
 
         }
+
+
+        event.preventDefault();
+
+
+        /*
+            CHECK REPEATED GUESS
+            BEFORE submitting.
+        */
+
+        if (
+            guessedLetters.has(
+                letter
+            )
+        ) {
+
+            repeatedGuess(
+                letter
+            );
+
+            return;
+
+        }
+
+
+        if (
+            submitting
+        ) {
+
+            return;
+
+        }
+
+
+        submitGuess(
+            letter,
+            null
+        );
 
     }
 );
@@ -690,29 +767,9 @@ async function submitGuess(
 ) {
 
     if (
-        gameFinished
-    ) {
-
-        return;
-
-    }
-
-
-    /*
-        Do NOT block the UI.
-        Only prevent duplicate requests.
-    */
-
-    if (
+        gameFinished ||
         submitting
     ) {
-
-        if (button) {
-
-            button.disabled =
-                false;
-
-        }
 
         return;
 
@@ -724,8 +781,10 @@ async function submitGuess(
 
 
     /*
-        Optimistically remember the letter.
-        This makes repeated taps feel instant.
+        Immediately remember the letter.
+
+        This prevents double tapping while
+        the Flask request is running.
     */
 
     guessedLetters.add(
@@ -771,6 +830,10 @@ async function submitGuess(
             await response.json();
 
 
+        /*
+            Show server message.
+        */
+
         if (
             result.message
         ) {
@@ -783,8 +846,7 @@ async function submitGuess(
 
 
         /*
-            Flask response updates the
-            real game state.
+            Update complete game state.
         */
 
         if (
@@ -817,8 +879,9 @@ async function submitGuess(
 
 
         /*
-            If request failed,
-            allow the letter again.
+            Request failed.
+
+            Allow the letter to be tried again.
         */
 
         guessedLetters.delete(
@@ -827,9 +890,6 @@ async function submitGuess(
 
 
         if (button) {
-
-            button.disabled =
-                false;
 
             button.classList.remove(
                 "used"
@@ -852,7 +912,7 @@ async function submitGuess(
 
 
 /* =========================================================
-   RESULT
+   RESULT POPUP
 ========================================================= */
 
 function showResult(game) {
@@ -984,7 +1044,8 @@ restartButton.addEventListener(
                     button.classList.remove(
                         "used",
                         "correct",
-                        "wrong"
+                        "wrong",
+                        "repeat-shake"
                     );
 
                 }
@@ -1041,7 +1102,7 @@ window.addEventListener(
 
 
 /* =========================================================
-   START
+   START GAME
 ========================================================= */
 
 loadGame();
