@@ -11,6 +11,14 @@ const wordElement =
 const keyboardInput =
     document.getElementById("keyboard-input");
 
+const mobileKeyboard =
+    document.getElementById("mobile-keyboard");
+
+const keyboardButtons =
+    document.querySelectorAll(
+        "#mobile-keyboard button"
+    );
+
 const chancesElement =
     document.getElementById("chances");
 
@@ -50,6 +58,9 @@ const finalScoreElement =
 const restartButton =
     document.getElementById("restart-button");
 
+const keyboardStatus =
+    document.getElementById("keyboard-status");
+
 
 // =========================================================
 // HANGMAN PARTS
@@ -82,6 +93,82 @@ let submitting = false;
 
 
 // =========================================================
+// DEVICE CHECK
+// =========================================================
+
+function isMobileDevice() {
+
+    return (
+        window.matchMedia(
+            "(max-width: 600px)"
+        ).matches
+    );
+
+}
+
+
+// =========================================================
+// SET KEYBOARD MODE
+// =========================================================
+
+function setupKeyboardMode() {
+
+
+    if (isMobileDevice()) {
+
+
+        /*
+            Mobile:
+
+            Show website keyboard.
+        */
+
+        mobileKeyboard.style.display =
+            "flex";
+
+
+        keyboardStatus.textContent =
+            "ON-SCREEN KEYBOARD";
+
+
+        /*
+            Completely prevent the
+            mobile system keyboard.
+        */
+
+        keyboardInput.setAttribute(
+            "inputmode",
+            "none"
+        );
+
+        keyboardInput.setAttribute(
+            "readonly",
+            ""
+        );
+
+
+    } else {
+
+
+        /*
+            Desktop:
+
+            Hide website keyboard.
+        */
+
+        mobileKeyboard.style.display =
+            "none";
+
+
+        keyboardStatus.textContent =
+            "PHYSICAL KEYBOARD";
+
+    }
+
+}
+
+
+// =========================================================
 // BEST SCORE
 // =========================================================
 
@@ -99,14 +186,14 @@ function getBestScore() {
 
 
 // =========================================================
-// SCORE
+// UPDATE SCORE
 // =========================================================
 
 function updateScore(score) {
 
 
     /*
-        Never show zero.
+        Never display 0.
     */
 
     if (score > 0) {
@@ -159,117 +246,6 @@ function updateScore(score) {
 
 
 // =========================================================
-// OPEN SYSTEM KEYBOARD
-// =========================================================
-
-function openKeyboard() {
-
-
-    if (gameFinished) {
-
-        return;
-
-    }
-
-
-    keyboardInput.value = "";
-
-
-    /*
-        Focus happens because this function
-        is triggered by a real user tap.
-    */
-
-    keyboardInput.focus();
-
-}
-
-
-// =========================================================
-// CLICK BLANKS
-// =========================================================
-
-wordElement.addEventListener(
-    "click",
-    function() {
-
-        openKeyboard();
-
-    }
-);
-
-
-// =========================================================
-// KEYBOARD INPUT
-// =========================================================
-
-keyboardInput.addEventListener(
-    "input",
-    function() {
-
-
-        if (gameFinished) {
-
-            keyboardInput.value = "";
-
-            return;
-
-        }
-
-
-        let letter =
-            keyboardInput.value
-                .toLowerCase();
-
-
-        /*
-            Only English letters.
-        */
-
-        letter =
-            letter.replace(
-                /[^a-z]/g,
-                ""
-            );
-
-
-        /*
-            Only one character.
-        */
-
-        if (
-            letter.length > 1
-        ) {
-
-            letter =
-                letter.slice(-1);
-
-        }
-
-
-        keyboardInput.value =
-            letter;
-
-
-        /*
-            Automatically submit.
-        */
-
-        if (
-            letter.length === 1
-        ) {
-
-            submitGuess(
-                letter
-            );
-
-        }
-
-    }
-);
-
-
-// =========================================================
 // LOAD GAME
 // =========================================================
 
@@ -309,6 +285,7 @@ async function loadGame() {
 
 
         console.error(
+            "LOAD ERROR:",
             error
         );
 
@@ -349,6 +326,12 @@ function updateGame(game) {
 
     updateHangman(
         game.wrong_guesses
+    );
+
+
+    updateKeyboard(
+        game.guessed_letters,
+        game.wrong_letters
     );
 
 
@@ -477,13 +460,6 @@ function updateHangman(
 ) {
 
 
-    /*
-        10 chances.
-
-        The six body parts appear
-        gradually as mistakes increase.
-    */
-
     const partsToShow =
 
         Math.ceil(
@@ -534,6 +510,183 @@ function updateHangman(
 
 
 // =========================================================
+// UPDATE ON-SCREEN KEYBOARD
+// =========================================================
+
+function updateKeyboard(
+    guessedLetters,
+    wrongLetters
+) {
+
+
+    const guessed =
+        guessedLetters || [];
+
+    const wrong =
+        wrongLetters || [];
+
+
+    keyboardButtons.forEach(
+        button => {
+
+
+            const letter =
+                button.dataset.letter;
+
+
+            button.classList.remove(
+                "used",
+                "correct",
+                "wrong"
+            );
+
+
+            if (
+                guessed.includes(letter)
+            ) {
+
+
+                button.classList.add(
+                    "used"
+                );
+
+
+                if (
+                    wrong.includes(letter)
+                ) {
+
+                    button.classList.add(
+                        "wrong"
+                    );
+
+                } else {
+
+                    button.classList.add(
+                        "correct"
+                    );
+
+                }
+
+            }
+
+        }
+    );
+
+}
+
+
+// =========================================================
+// ON-SCREEN KEYBOARD BUTTONS
+// =========================================================
+
+keyboardButtons.forEach(
+    button => {
+
+
+        button.addEventListener(
+            "click",
+            function() {
+
+
+                if (
+                    gameFinished ||
+                    submitting
+                ) {
+
+                    return;
+
+                }
+
+
+                const letter =
+                    button.dataset.letter;
+
+
+                submitGuess(
+                    letter
+                );
+
+            }
+        );
+
+    }
+);
+
+
+// =========================================================
+// DESKTOP PHYSICAL KEYBOARD
+// =========================================================
+
+document.addEventListener(
+    "keydown",
+    function(event) {
+
+
+        /*
+            Only allow physical keyboard
+            on desktop.
+
+            Mobile uses the website keyboard.
+        */
+
+        if (
+            isMobileDevice()
+        ) {
+
+            return;
+
+        }
+
+
+        if (
+            gameFinished ||
+            submitting
+        ) {
+
+            return;
+
+        }
+
+
+        /*
+            Ignore shortcuts,
+            Ctrl combinations, etc.
+        */
+
+        if (
+            event.ctrlKey ||
+            event.altKey ||
+            event.metaKey
+        ) {
+
+            return;
+
+        }
+
+
+        const letter =
+            event.key.toLowerCase();
+
+
+        if (
+            /^[a-z]$/.test(letter)
+        ) {
+
+
+            event.preventDefault();
+
+
+            submitGuess(
+                letter
+            );
+
+        }
+
+    }
+);
+
+
+// =========================================================
 // SUBMIT GUESS
 // =========================================================
 
@@ -553,9 +706,6 @@ async function submitGuess(
 
 
     submitting = true;
-
-
-    keyboardInput.value = "";
 
 
     try {
@@ -580,7 +730,8 @@ async function submitGuess(
                     body:
                         JSON.stringify({
 
-                            letter: letter
+                            letter:
+                                letter
 
                         }),
 
@@ -645,32 +796,11 @@ async function submitGuess(
 
     submitting = false;
 
-
-    /*
-        Keep the system keyboard ready
-        for the next letter.
-
-        Do NOT do this after game ends.
-    */
-
-    if (!gameFinished) {
-
-        setTimeout(
-            function() {
-
-                keyboardInput.focus();
-
-            },
-            50
-        );
-
-    }
-
 }
 
 
 // =========================================================
-// RESULT
+// RESULT POPUP
 // =========================================================
 
 function showResult(game) {
@@ -806,13 +936,6 @@ restartButton.addEventListener(
             );
 
 
-            /*
-                Don't automatically open
-                the keyboard after restart.
-
-                User taps the blanks.
-            */
-
         } catch (error) {
 
 
@@ -829,6 +952,23 @@ restartButton.addEventListener(
         }
 
     }
+);
+
+
+// =========================================================
+// DEVICE MODE
+// =========================================================
+
+setupKeyboardMode();
+
+
+// =========================================================
+// HANDLE SCREEN RESIZE
+// =========================================================
+
+window.addEventListener(
+    "resize",
+    setupKeyboardMode
 );
 
 
