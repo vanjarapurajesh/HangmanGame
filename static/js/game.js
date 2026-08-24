@@ -1,15 +1,11 @@
 "use strict";
 
-
-// =========================================================
-// ELEMENTS
-// =========================================================
+/* =========================================================
+   ELEMENTS
+========================================================= */
 
 const wordElement =
     document.getElementById("word");
-
-const keyboardInput =
-    document.getElementById("keyboard-input");
 
 const mobileKeyboard =
     document.getElementById("mobile-keyboard");
@@ -62,103 +58,64 @@ const keyboardStatus =
     document.getElementById("keyboard-status");
 
 
-// =========================================================
-// HANGMAN PARTS
-// =========================================================
+/* =========================================================
+   HANGMAN PARTS
+========================================================= */
 
 const bodyParts = [
-
     "head",
-
     "body",
-
     "left-arm",
-
     "right-arm",
-
     "left-leg",
-
     "right-leg"
-
 ];
 
 
-// =========================================================
-// STATE
-// =========================================================
+/* =========================================================
+   GAME STATE
+========================================================= */
 
 let gameFinished = false;
 
 let submitting = false;
 
+let guessedLetters = new Set();
 
-// =========================================================
-// DEVICE CHECK
-// =========================================================
+let wrongLetters = new Set();
+
+
+/* =========================================================
+   DEVICE
+========================================================= */
 
 function isMobileDevice() {
 
-    return (
-        window.matchMedia(
-            "(max-width: 600px)"
-        ).matches
-    );
+    return window.matchMedia(
+        "(max-width: 600px)"
+    ).matches;
 
 }
 
 
-// =========================================================
-// SET KEYBOARD MODE
-// =========================================================
+/* =========================================================
+   KEYBOARD MODE
+========================================================= */
 
 function setupKeyboardMode() {
 
-
     if (isMobileDevice()) {
-
-
-        /*
-            Mobile:
-
-            Show website keyboard.
-        */
 
         mobileKeyboard.style.display =
             "flex";
 
-
         keyboardStatus.textContent =
             "ON-SCREEN KEYBOARD";
 
-
-        /*
-            Completely prevent the
-            mobile system keyboard.
-        */
-
-        keyboardInput.setAttribute(
-            "inputmode",
-            "none"
-        );
-
-        keyboardInput.setAttribute(
-            "readonly",
-            ""
-        );
-
-
     } else {
-
-
-        /*
-            Desktop:
-
-            Hide website keyboard.
-        */
 
         mobileKeyboard.style.display =
             "none";
-
 
         keyboardStatus.textContent =
             "PHYSICAL KEYBOARD";
@@ -168,33 +125,26 @@ function setupKeyboardMode() {
 }
 
 
-// =========================================================
-// BEST SCORE
-// =========================================================
+/* =========================================================
+   BEST SCORE
+========================================================= */
 
 function getBestScore() {
 
     return Number(
-
         localStorage.getItem(
             "hangmanBestScore"
         ) || 0
-
     );
 
 }
 
 
-// =========================================================
-// UPDATE SCORE
-// =========================================================
+/* =========================================================
+   SCORE
+========================================================= */
 
 function updateScore(score) {
-
-
-    /*
-        Never display 0.
-    */
 
     if (score > 0) {
 
@@ -245,14 +195,13 @@ function updateScore(score) {
 }
 
 
-// =========================================================
-// LOAD GAME
-// =========================================================
+/* =========================================================
+   LOAD GAME
+========================================================= */
 
 async function loadGame() {
 
     try {
-
 
         const response =
             await fetch(
@@ -283,7 +232,6 @@ async function loadGame() {
 
     } catch (error) {
 
-
         console.error(
             "LOAD ERROR:",
             error
@@ -299,12 +247,11 @@ async function loadGame() {
 }
 
 
-// =========================================================
-// UPDATE GAME
-// =========================================================
+/* =========================================================
+   UPDATE GAME
+========================================================= */
 
 function updateGame(game) {
-
 
     renderWord(
         game.word
@@ -361,20 +308,16 @@ function updateGame(game) {
 }
 
 
-// =========================================================
-// RENDER WORD
-// =========================================================
+/* =========================================================
+   RENDER WORD
+========================================================= */
 
 function renderWord(word) {
-
 
     wordElement.innerHTML = "";
 
 
-    for (
-        const letter of word
-    ) {
-
+    for (const letter of word) {
 
         const element =
             document.createElement(
@@ -382,14 +325,11 @@ function renderWord(word) {
             );
 
 
-        element.classList.add(
-            "word-letter"
-        );
+        element.className =
+            "word-letter";
 
 
-        if (
-            letter === "_"
-        ) {
+        if (letter === "_") {
 
             element.textContent =
                 "_";
@@ -415,14 +355,13 @@ function renderWord(word) {
 }
 
 
-// =========================================================
-// WRONG LETTERS
-// =========================================================
+/* =========================================================
+   WRONG LETTERS
+========================================================= */
 
 function renderWrongLetters(
     letters
 ) {
-
 
     if (
         !letters ||
@@ -440,45 +379,37 @@ function renderWrongLetters(
     wrongLettersElement.textContent =
 
         letters
-
             .map(
                 letter =>
                     letter.toUpperCase()
             )
-
             .join(" • ");
 
 }
 
 
-// =========================================================
-// HANGMAN
-// =========================================================
+/* =========================================================
+   HANGMAN
+========================================================= */
 
 function updateHangman(
     wrongGuesses
 ) {
 
-
     const partsToShow =
-
         Math.ceil(
-
             (
                 wrongGuesses / 10
             ) *
             bodyParts.length
-
         );
 
 
     bodyParts.forEach(
-
         (
             part,
             index
         ) => {
-
 
             const element =
                 document.getElementById(
@@ -503,32 +434,34 @@ function updateHangman(
             }
 
         }
-
     );
 
 }
 
 
-// =========================================================
-// UPDATE ON-SCREEN KEYBOARD
-// =========================================================
+/* =========================================================
+   UPDATE MOBILE KEYBOARD
+========================================================= */
 
 function updateKeyboard(
-    guessedLetters,
-    wrongLetters
+    guessed,
+    wrong
 ) {
 
+    guessedLetters =
+        new Set(
+            guessed || []
+        );
 
-    const guessed =
-        guessedLetters || [];
 
-    const wrong =
-        wrongLetters || [];
+    wrongLetters =
+        new Set(
+            wrong || []
+        );
 
 
     keyboardButtons.forEach(
         button => {
-
 
             const letter =
                 button.dataset.letter;
@@ -542,9 +475,10 @@ function updateKeyboard(
 
 
             if (
-                guessed.includes(letter)
+                guessedLetters.has(
+                    letter
+                )
             ) {
-
 
                 button.classList.add(
                     "used"
@@ -552,7 +486,9 @@ function updateKeyboard(
 
 
                 if (
-                    wrong.includes(letter)
+                    wrongLetters.has(
+                        letter
+                    )
                 ) {
 
                     button.classList.add(
@@ -575,17 +511,49 @@ function updateKeyboard(
 }
 
 
-// =========================================================
-// ON-SCREEN KEYBOARD BUTTONS
-// =========================================================
+/* =========================================================
+   FAST MOBILE BUTTON FEEDBACK
+========================================================= */
+
+function markButtonImmediately(
+    button,
+    letter
+) {
+
+    /*
+        React visually BEFORE Flask responds.
+        This makes the keyboard feel instant.
+    */
+
+    button.classList.add(
+        "used"
+    );
+
+
+    button.disabled =
+        true;
+
+
+    button.setAttribute(
+        "aria-disabled",
+        "true"
+    );
+
+}
+
+
+/* =========================================================
+   MOBILE KEYBOARD
+========================================================= */
 
 keyboardButtons.forEach(
     button => {
 
-
         button.addEventListener(
             "click",
-            function() {
+            function(event) {
+
+                event.preventDefault();
 
 
                 if (
@@ -602,8 +570,34 @@ keyboardButtons.forEach(
                     button.dataset.letter;
 
 
-                submitGuess(
+                /*
+                    Ignore already-used letters.
+                */
+
+                if (
+                    guessedLetters.has(
+                        letter
+                    )
+                ) {
+
+                    return;
+
+                }
+
+
+                /*
+                    INSTANT visual reaction.
+                */
+
+                markButtonImmediately(
+                    button,
                     letter
+                );
+
+
+                submitGuess(
+                    letter,
+                    button
                 );
 
             }
@@ -613,21 +607,13 @@ keyboardButtons.forEach(
 );
 
 
-// =========================================================
-// DESKTOP PHYSICAL KEYBOARD
-// =========================================================
+/* =========================================================
+   DESKTOP PHYSICAL KEYBOARD
+========================================================= */
 
 document.addEventListener(
     "keydown",
     function(event) {
-
-
-        /*
-            Only allow physical keyboard
-            on desktop.
-
-            Mobile uses the website keyboard.
-        */
 
         if (
             isMobileDevice()
@@ -648,11 +634,6 @@ document.addEventListener(
         }
 
 
-        /*
-            Ignore shortcuts,
-            Ctrl combinations, etc.
-        */
-
         if (
             event.ctrlKey ||
             event.altKey ||
@@ -669,15 +650,28 @@ document.addEventListener(
 
 
         if (
-            /^[a-z]$/.test(letter)
+            /^[a-z]$/.test(
+                letter
+            )
         ) {
-
 
             event.preventDefault();
 
 
+            if (
+                guessedLetters.has(
+                    letter
+                )
+            ) {
+
+                return;
+
+            }
+
+
             submitGuess(
-                letter
+                letter,
+                null
             );
 
         }
@@ -686,18 +680,17 @@ document.addEventListener(
 );
 
 
-// =========================================================
-// SUBMIT GUESS
-// =========================================================
+/* =========================================================
+   SUBMIT GUESS
+========================================================= */
 
 async function submitGuess(
-    letter
+    letter,
+    button
 ) {
 
-
     if (
-        gameFinished ||
-        submitting
+        gameFinished
     ) {
 
         return;
@@ -705,41 +698,63 @@ async function submitGuess(
     }
 
 
-    submitting = true;
+    /*
+        Do NOT block the UI.
+        Only prevent duplicate requests.
+    */
+
+    if (
+        submitting
+    ) {
+
+        if (button) {
+
+            button.disabled =
+                false;
+
+        }
+
+        return;
+
+    }
+
+
+    submitting =
+        true;
+
+
+    /*
+        Optimistically remember the letter.
+        This makes repeated taps feel instant.
+    */
+
+    guessedLetters.add(
+        letter
+    );
 
 
     try {
 
-
         const response =
             await fetch(
-
                 "/api/guess",
-
                 {
-
                     method: "POST",
 
                     headers: {
-
                         "Content-Type":
                             "application/json"
-
                     },
 
                     body:
                         JSON.stringify({
-
                             letter:
                                 letter
-
                         }),
 
                     cache:
                         "no-store"
-
                 }
-
             );
 
 
@@ -756,12 +771,25 @@ async function submitGuess(
             await response.json();
 
 
-        showMessage(
+        if (
             result.message
-        );
+        ) {
+
+            showMessage(
+                result.message
+            );
+
+        }
 
 
-        if (result.game) {
+        /*
+            Flask response updates the
+            real game state.
+        */
+
+        if (
+            result.game
+        ) {
 
             updateGame(
                 result.game
@@ -770,7 +798,9 @@ async function submitGuess(
         }
 
 
-        if (result.answer) {
+        if (
+            result.answer
+        ) {
 
             answerElement.textContent =
                 result.answer.toUpperCase();
@@ -780,31 +810,52 @@ async function submitGuess(
 
     } catch (error) {
 
-
         console.error(
             "GUESS ERROR:",
             error
         );
 
 
+        /*
+            If request failed,
+            allow the letter again.
+        */
+
+        guessedLetters.delete(
+            letter
+        );
+
+
+        if (button) {
+
+            button.disabled =
+                false;
+
+            button.classList.remove(
+                "used"
+            );
+
+        }
+
+
         showMessage(
-            "Something went wrong. Check Flask."
+            "Connection error. Try again."
         );
 
     }
 
 
-    submitting = false;
+    submitting =
+        false;
 
 }
 
 
-// =========================================================
-// RESULT POPUP
-// =========================================================
+/* =========================================================
+   RESULT
+========================================================= */
 
 function showResult(game) {
-
 
     gameResult.classList.remove(
         "hidden"
@@ -830,29 +881,22 @@ function showResult(game) {
         game.won
     ) {
 
-
         resultIcon.textContent =
             "🎉";
-
 
         resultTitle.textContent =
             "You Win!";
 
-
         resultText.textContent =
             "Excellent! You found the word.";
 
-
     } else {
-
 
         resultIcon.textContent =
             "💀";
 
-
         resultTitle.textContent =
             "Game Over";
-
 
         resultText.textContent =
             "You used all 10 chances.";
@@ -862,9 +906,9 @@ function showResult(game) {
 }
 
 
-// =========================================================
-// MESSAGE
-// =========================================================
+/* =========================================================
+   MESSAGE
+========================================================= */
 
 function showMessage(
     message
@@ -876,32 +920,32 @@ function showMessage(
 }
 
 
-// =========================================================
-// RESTART
-// =========================================================
+/* =========================================================
+   RESTART
+========================================================= */
 
 restartButton.addEventListener(
     "click",
     async function() {
 
+        if (
+            submitting
+        ) {
+
+            return;
+
+        }
+
 
         try {
 
-
             const response =
                 await fetch(
-
                     "/api/restart",
-
                     {
-
                         method: "POST",
-
-                        cache:
-                            "no-store"
-
+                        cache: "no-store"
                     }
-
                 );
 
 
@@ -922,6 +966,31 @@ restartButton.addEventListener(
                 false;
 
 
+            submitting =
+                false;
+
+
+            guessedLetters.clear();
+
+            wrongLetters.clear();
+
+
+            keyboardButtons.forEach(
+                button => {
+
+                    button.disabled =
+                        false;
+
+                    button.classList.remove(
+                        "used",
+                        "correct",
+                        "wrong"
+                    );
+
+                }
+            );
+
+
             gameResult.classList.add(
                 "hidden"
             );
@@ -937,7 +1006,6 @@ restartButton.addEventListener(
 
 
         } catch (error) {
-
 
             console.error(
                 "RESTART ERROR:",
@@ -955,16 +1023,16 @@ restartButton.addEventListener(
 );
 
 
-// =========================================================
-// DEVICE MODE
-// =========================================================
+/* =========================================================
+   DEVICE MODE
+========================================================= */
 
 setupKeyboardMode();
 
 
-// =========================================================
-// HANDLE SCREEN RESIZE
-// =========================================================
+/* =========================================================
+   RESIZE
+========================================================= */
 
 window.addEventListener(
     "resize",
@@ -972,8 +1040,8 @@ window.addEventListener(
 );
 
 
-// =========================================================
-// START
-// =========================================================
+/* =========================================================
+   START
+========================================================= */
 
 loadGame();
