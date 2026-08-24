@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="en">
 
 <head>
@@ -15,12 +16,12 @@
         content="#08090d"
     >
 
-    <meta
-        name="description"
-        content="A modern Hangman word guessing game."
-    >
+    <title>
+        Hangman
+    </title>
 
-    <title>Hangman — Word Challenge</title>
+
+    <!-- CSS -->
 
     <link
         rel="stylesheet"
@@ -32,59 +33,89 @@
 
 <body>
 
+
 <main class="app">
 
 
-    <!-- =========================================
+    <!-- =====================================================
          HEADER
-    ========================================== -->
+    ====================================================== -->
 
     <header class="top-bar">
 
 
+        <!-- BRAND -->
+
         <div class="brand">
+
 
             <div class="brand-logo">
                 H
             </div>
 
+
             <div class="brand-text">
 
-                <h1>HANGMAN</h1>
+                <h1>
+                    HANGMAN
+                </h1>
 
-                <span>WORD CHALLENGE</span>
+                <span>
+                    WORD CHALLENGE
+                </span>
 
             </div>
+
 
         </div>
 
 
+        <!-- SCOREBOARD -->
+
         <div class="scoreboard">
 
 
+            <!-- SCORE -->
+
             <div class="score-item">
 
-                <span>SCORE</span>
+                <span>
+                    SCORE
+                </span>
 
-                <strong id="score">—</strong>
+                <strong id="score">
+                    —
+                </strong>
 
             </div>
 
 
+            <!-- BEST -->
+
             <div class="score-item">
 
-                <span>BEST</span>
+                <span>
+                    BEST
+                </span>
 
-                <strong id="best-score">—</strong>
+                <strong id="best-score">
+                    —
+                </strong>
 
             </div>
 
 
+            <!-- CHANCES -->
+
             <div class="score-item">
 
-                <span>CHANCES</span>
+                <span>
+                    CHANCES
+                </span>
 
-                <strong id="chances">10</strong>
+                <strong id="chances">
+                    10
+                </strong>
 
             </div>
 
@@ -96,9 +127,9 @@
 
 
 
-    <!-- =========================================
-         MAIN GAME
-    ========================================== -->
+    <!-- =====================================================
+         GAME CARD
+    ====================================================== -->
 
     <section class="game-card">
 
@@ -107,11 +138,13 @@
 
         <div class="game-header">
 
+
             <div>
 
                 <span class="eyebrow">
                     GUESS THE WORD
                 </span>
+
 
                 <h2>
                     Can you solve it?
@@ -122,7 +155,10 @@
 
             <div class="word-info">
 
-                <span>LETTERS</span>
+                <span>
+                    LETTERS
+                </span>
+
 
                 <strong id="word-length">
                     —
@@ -130,26 +166,14 @@
 
             </div>
 
-        </div>
-
-
-        <!-- PROGRESS -->
-
-        <div class="progress-container">
-
-            <div
-                id="progress-bar"
-                class="progress-bar"
-            ></div>
 
         </div>
 
 
 
-        <!-- =========================================
+        <!-- =================================================
              HANGMAN
-             NO GALLOWS
-        ========================================== -->
+        ================================================== -->
 
         <div class="hangman-container">
 
@@ -157,11 +181,15 @@
             <div class="hangman">
 
 
+                <!-- HEAD -->
+
                 <div
                     id="head"
                     class="hangman-part head"
                 ></div>
 
+
+                <!-- BODY -->
 
                 <div
                     id="body"
@@ -169,11 +197,15 @@
                 ></div>
 
 
+                <!-- LEFT ARM -->
+
                 <div
                     id="left-arm"
                     class="hangman-part left-arm"
                 ></div>
 
+
+                <!-- RIGHT ARM -->
 
                 <div
                     id="right-arm"
@@ -181,11 +213,15 @@
                 ></div>
 
 
+                <!-- LEFT LEG -->
+
                 <div
                     id="left-leg"
                     class="hangman-part left-leg"
                 ></div>
 
+
+                <!-- RIGHT LEG -->
 
                 <div
                     id="right-leg"
@@ -200,9 +236,9 @@
 
 
 
-        <!-- =========================================
+        <!-- =================================================
              WORD
-        ========================================== -->
+        ================================================== -->
 
         <div
             id="word"
@@ -211,31 +247,38 @@
 
 
 
-        <!-- =========================================
-             SYSTEM KEYBOARD INPUT
-        ========================================== -->
+        <!-- =================================================
+             GUESS INPUT
+        ================================================== -->
 
         <div class="guess-area">
 
 
             <label
-                for="guess-input"
                 class="guess-label"
+                for="guess-input"
             >
-                YOUR GUESS
+                ENTER YOUR GUESS
             </label>
 
 
             <div class="guess-box">
 
 
+                <!--
+                    This is a real input.
+
+                    On mobile, tapping this opens
+                    the phone's normal system keyboard.
+                -->
+
                 <input
                     id="guess-input"
                     type="text"
-                    inputmode="text"
+                    inputmode="latin"
                     autocomplete="off"
                     autocorrect="off"
-                    autocapitalize="none"
+                    autocapitalize="characters"
                     spellcheck="false"
                     maxlength="1"
                     placeholder="A"
@@ -256,8 +299,10 @@
 
             <p class="keyboard-message">
 
-                Tap the box to open your
-                <strong>system keyboard</strong>
+                Use your
+                <strong>
+                    system keyboard
+                </strong>
 
             </p>
 
@@ -266,11 +311,12 @@
 
 
 
-        <!-- =========================================
+        <!-- =================================================
              WRONG LETTERS
-        ========================================== -->
+        ================================================== -->
 
         <div class="wrong-section">
+
 
             <span class="section-title">
                 WRONG LETTERS
@@ -283,6 +329,7 @@
             >
                 None
             </div>
+
 
         </div>
 
@@ -297,9 +344,9 @@
 
 
 
-        <!-- =========================================
+        <!-- =================================================
              RESULT POPUP
-        ========================================== -->
+        ================================================== -->
 
         <div
             id="game-result"
@@ -318,38 +365,52 @@
                 </div>
 
 
-                <h2 id="result-title">
+                <h2
+                    id="result-title"
+                >
                     You Win!
                 </h2>
 
 
-                <p id="result-text">
+                <p
+                    id="result-text"
+                >
                     Excellent!
                 </p>
 
 
                 <div class="result-word">
 
+
                     <span>
                         THE WORD WAS
                     </span>
 
-                    <strong id="answer">
+
+                    <strong
+                        id="answer"
+                    >
                         —
                     </strong>
+
 
                 </div>
 
 
                 <div class="final-score">
 
+
                     <span>
                         SCORE
                     </span>
 
-                    <strong id="final-score">
+
+                    <strong
+                        id="final-score"
+                    >
                         —
                     </strong>
+
 
                 </div>
 
@@ -372,21 +433,31 @@
 
 
 
-    <!-- =========================================
+    <!-- =====================================================
          FOOTER
-    ========================================== -->
+    ====================================================== -->
 
     <footer>
 
-        <span>HANGMAN</span>
+        <span>
+            HANGMAN
+        </span>
 
-        <span>•</span>
+        <span>
+            •
+        </span>
 
-        <span>10 CHANCES</span>
+        <span>
+            10 CHANCES
+        </span>
 
-        <span>•</span>
+        <span>
+            •
+        </span>
 
-        <span>SYSTEM KEYBOARD</span>
+        <span>
+            SYSTEM KEYBOARD
+        </span>
 
     </footer>
 
@@ -394,9 +465,12 @@
 </main>
 
 
+<!-- JAVASCRIPT -->
+
 <script
     src="{{ url_for('static', filename='js/game.js') }}"
 ></script>
+
 
 </body>
 
