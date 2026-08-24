@@ -15,11 +15,11 @@
 
 :root {
 
+    /* Main colors */
+
     --background: #08090d;
 
     --card: #11131a;
-
-    --card-light: #171922;
 
     --border: rgba(255, 255, 255, 0.08);
 
@@ -41,11 +41,6 @@
 /* =========================================================
    BODY
 ========================================================= */
-
-html {
-    min-height: 100%;
-}
-
 
 body {
 
@@ -80,12 +75,15 @@ body {
 
 
 /* =========================================================
-   APP
+   MAIN APP
 ========================================================= */
 
 .app {
 
-    width: min(1050px, 94%);
+    width: min(
+        1000px,
+        94%
+    );
 
     margin: 0 auto;
 
@@ -96,7 +94,7 @@ body {
 
 
 /* =========================================================
-   TOP BAR
+   HEADER
 ========================================================= */
 
 .top-bar {
@@ -124,16 +122,16 @@ body {
 
     align-items: center;
 
-    gap: 11px;
+    gap: 10px;
 
 }
 
 
 .brand-logo {
 
-    width: 46px;
+    width: 45px;
 
-    height: 46px;
+    height: 45px;
 
     display: flex;
 
@@ -141,24 +139,19 @@ body {
 
     justify-content: center;
 
-    flex-shrink: 0;
-
     border-radius: 13px;
 
     background:
+
         linear-gradient(
             135deg,
             var(--accent),
             var(--blue)
         );
 
-    font-size: 19px;
+    font-size: 18px;
 
     font-weight: 900;
-
-    box-shadow:
-        0 10px 30px
-        rgba(139, 92, 246, 0.25);
 
 }
 
@@ -182,7 +175,7 @@ body {
 
     font-size: 8px;
 
-    letter-spacing: 1.8px;
+    letter-spacing: 1.7px;
 
 }
 
@@ -213,8 +206,6 @@ body {
 
     align-items: center;
 
-    justify-content: center;
-
     gap: 3px;
 
     border:
@@ -236,7 +227,7 @@ body {
 
     font-weight: 800;
 
-    letter-spacing: 1.2px;
+    letter-spacing: 1px;
 
 }
 
@@ -273,6 +264,7 @@ body {
     border-radius: 25px;
 
     background:
+
         linear-gradient(
             145deg,
             rgba(255, 255, 255, 0.045),
@@ -280,11 +272,9 @@ body {
         );
 
     box-shadow:
+
         0 30px 80px
         rgba(0, 0, 0, 0.38);
-
-    backdrop-filter:
-        blur(20px);
 
 }
 
@@ -297,9 +287,9 @@ body {
 
     display: flex;
 
-    align-items: flex-start;
-
     justify-content: space-between;
+
+    align-items: flex-start;
 
 }
 
@@ -322,8 +312,6 @@ body {
     margin-top: 6px;
 
     font-size: 30px;
-
-    line-height: 1.1;
 
 }
 
@@ -360,57 +348,14 @@ body {
 
 
 /* =========================================================
-   PROGRESS
-========================================================= */
-
-.progress-container {
-
-    width: 100%;
-
-    height: 4px;
-
-    margin-top: 20px;
-
-    overflow: hidden;
-
-    border-radius: 10px;
-
-    background:
-        rgba(255, 255, 255, 0.06);
-
-}
-
-
-.progress-bar {
-
-    width: 100%;
-
-    height: 100%;
-
-    border-radius: inherit;
-
-    background:
-        linear-gradient(
-            90deg,
-            var(--accent),
-            var(--blue)
-        );
-
-    transition:
-        width 0.35s ease;
-
-}
-
-
-/* =========================================================
-   HANGMAN AREA
+   HANGMAN CONTAINER
 ========================================================= */
 
 .hangman-container {
 
     width: 100%;
 
-    height: 245px;
+    height: 250px;
 
     display: flex;
 
@@ -422,7 +367,7 @@ body {
 
 
 /* =========================================================
-   HANGMAN
+   HANGMAN PERSON
 ========================================================= */
 
 .hangman {
@@ -437,7 +382,7 @@ body {
 
 
 /* =========================================================
-   BODY PARTS
+   BODY PART BASE
 ========================================================= */
 
 .hangman-part {
@@ -504,7 +449,7 @@ body {
 
 
 /* =========================================================
-   ARMS
+   LEFT ARM
 ========================================================= */
 
 .left-arm {
@@ -531,6 +476,10 @@ body {
 }
 
 
+/* =========================================================
+   RIGHT ARM
+========================================================= */
+
 .right-arm {
 
     top: 71px;
@@ -556,7 +505,7 @@ body {
 
 
 /* =========================================================
-   LEGS
+   LEFT LEG
 ========================================================= */
 
 .left-leg {
@@ -583,6 +532,10 @@ body {
 }
 
 
+/* =========================================================
+   RIGHT LEG
+========================================================= */
+
 .right-leg {
 
     top: 121px;
@@ -598,11 +551,11 @@ body {
     background:
         var(--accent-light);
 
-    transform-origin:
-        top center;
-
     transform:
         rotate(-35deg);
+
+    transform-origin:
+        top center;
 
 }
 
@@ -627,8 +580,7 @@ body {
 
     gap: 8px;
 
-    margin:
-        0 auto 20px;
+    margin-bottom: 20px;
 
 }
 
@@ -648,13 +600,9 @@ body {
     border-bottom:
         3px solid var(--accent);
 
-    color: var(--text);
-
     font-size: 30px;
 
     font-weight: 800;
-
-    text-transform: uppercase;
 
 }
 
@@ -672,7 +620,10 @@ body {
 
 .guess-area {
 
-    width: min(430px, 100%);
+    width: min(
+        430px,
+        100%
+    );
 
     margin:
         0 auto 22px;
@@ -692,16 +643,12 @@ body {
 
     font-weight: 800;
 
-    letter-spacing: 1.6px;
+    letter-spacing: 1.5px;
 
     text-align: center;
 
 }
 
-
-/* =========================================================
-   GUESS BOX
-========================================================= */
 
 .guess-box {
 
@@ -712,9 +659,13 @@ body {
 }
 
 
+/* =========================================================
+   MOBILE SYSTEM KEYBOARD INPUT
+========================================================= */
+
 #guess-input {
 
-    width: 75px;
+    width: 100%;
 
     height: 52px;
 
@@ -725,11 +676,11 @@ body {
     padding:
         0 15px;
 
+    outline: none;
+
     border:
         1px solid
-        rgba(255, 255, 255, 0.11);
-
-    outline: none;
+        rgba(255, 255, 255, 0.12);
 
     border-radius: 12px;
 
@@ -745,11 +696,6 @@ body {
     text-align: center;
 
     text-transform: uppercase;
-
-    transition:
-        border-color 0.2s ease,
-
-        box-shadow 0.2s ease;
 
 }
 
@@ -768,6 +714,7 @@ body {
         var(--accent);
 
     box-shadow:
+
         0 0 0 3px
         rgba(139, 92, 246, 0.13);
 
@@ -792,6 +739,7 @@ body {
     border-radius: 12px;
 
     background:
+
         linear-gradient(
             135deg,
             var(--accent),
@@ -808,30 +756,14 @@ body {
 
     cursor: pointer;
 
-    transition:
-        transform 0.2s ease,
-
-        box-shadow 0.2s ease;
-
 }
 
 
-#guess-button:hover {
+#guess-button:disabled {
 
-    transform:
-        translateY(-1px);
+    opacity: 0.6;
 
-    box-shadow:
-        0 8px 25px
-        rgba(139, 92, 246, 0.25);
-
-}
-
-
-#guess-button:active {
-
-    transform:
-        translateY(0);
+    cursor: not-allowed;
 
 }
 
@@ -846,7 +778,7 @@ body {
 
     color: var(--muted);
 
-    font-size: 10px;
+    font-size: 9px;
 
     text-align: center;
 
@@ -892,7 +824,7 @@ body {
 
     color: var(--danger);
 
-    font-size: 12px;
+    font-size: 11px;
 
     font-weight: 700;
 
@@ -923,7 +855,7 @@ body {
 
 
 /* =========================================================
-   RESULT
+   RESULT POPUP
 ========================================================= */
 
 .game-result {
@@ -945,7 +877,7 @@ body {
     border-radius: inherit;
 
     background:
-        rgba(0, 0, 0, 0.48);
+        rgba(0, 0, 0, 0.5);
 
     backdrop-filter:
         blur(5px);
@@ -972,46 +904,16 @@ body {
 
     border:
         1px solid
-        rgba(255, 255, 255, 0.10);
+        rgba(255, 255, 255, 0.1);
 
     border-radius: 18px;
 
     background:
-        linear-gradient(
-            145deg,
-            #181b24,
-            #101218
-        );
+        #151821;
 
     box-shadow:
         0 25px 70px
         rgba(0, 0, 0, 0.55);
-
-    animation:
-        popup-in 0.25s ease;
-
-}
-
-
-@keyframes popup-in {
-
-    from {
-
-        opacity: 0;
-
-        transform:
-            scale(0.94);
-
-    }
-
-    to {
-
-        opacity: 1;
-
-        transform:
-            scale(1);
-
-    }
 
 }
 
@@ -1042,6 +944,10 @@ body {
 
 }
 
+
+/* =========================================================
+   ANSWER
+========================================================= */
 
 .result-word {
 
@@ -1087,6 +993,10 @@ body {
 }
 
 
+/* =========================================================
+   FINAL SCORE
+========================================================= */
+
 .final-score {
 
     display: flex;
@@ -1121,12 +1031,9 @@ body {
 }
 
 
-.final-score strong {
-
-    font-size: 14px;
-
-}
-
+/* =========================================================
+   RESTART
+========================================================= */
 
 #restart-button {
 
@@ -1141,6 +1048,7 @@ body {
     border-radius: 9px;
 
     background:
+
         linear-gradient(
             135deg,
             var(--accent),
@@ -1172,7 +1080,7 @@ footer {
 
     flex-wrap: wrap;
 
-    gap: 9px;
+    gap: 8px;
 
     margin-top: 16px;
 
@@ -1180,7 +1088,7 @@ footer {
 
     font-size: 8px;
 
-    letter-spacing: 1.3px;
+    letter-spacing: 1.2px;
 
 }
 
@@ -1189,27 +1097,11 @@ footer {
    TABLET
 ========================================================= */
 
-@media (max-width: 750px) {
-
-    .app {
-
-        width: 94%;
-
-        padding-top: 20px;
-
-    }
-
+@media (max-width: 700px) {
 
     .game-card {
 
         padding: 24px;
-
-    }
-
-
-    .hangman-container {
-
-        height: 220px;
 
     }
 
@@ -1222,12 +1114,13 @@ footer {
 
 @media (max-width: 600px) {
 
+
     .app {
 
         width: 100%;
 
         padding:
-            14px 12px 16px;
+            12px 10px 16px;
 
     }
 
@@ -1236,68 +1129,64 @@ footer {
 
     .top-bar {
 
-        align-items: center;
+        gap: 8px;
 
-        gap: 10px;
-
-        margin-bottom: 12px;
+        margin-bottom: 10px;
 
     }
 
 
     .brand {
 
-        gap: 8px;
+        gap: 7px;
 
     }
 
 
     .brand-logo {
 
-        width: 38px;
+        width: 36px;
 
-        height: 38px;
+        height: 36px;
 
-        border-radius: 10px;
+        border-radius: 9px;
 
-        font-size: 16px;
+        font-size: 15px;
 
     }
 
 
     .brand-text h1 {
 
-        font-size: 14px;
+        font-size: 13px;
 
-        letter-spacing: 1.5px;
+        letter-spacing: 1.3px;
 
     }
 
 
     .brand-text span {
 
-        font-size: 6px;
-
-        letter-spacing: 1.2px;
+        font-size: 5px;
 
     }
 
 
-    /* Scoreboard */
+    /* Score */
 
     .scoreboard {
 
-        gap: 4px;
+        gap: 3px;
 
     }
 
 
     .score-item {
 
-        min-width: 49px;
+        min-width: 48px;
 
         padding:
-            6px 5px;
+            6px 4px;
 
         border-radius: 8px;
 
@@ -1306,16 +1195,14 @@ footer {
 
     .score-item span {
 
-        font-size: 6px;
-
-        letter-spacing: 0.8px;
+        font-size: 5.5px;
 
     }
 
 
     .score-item strong {
 
-        font-size: 13px;
+        font-size: 12px;
 
     }
 
@@ -1325,30 +1212,23 @@ footer {
     .game-card {
 
         padding:
-            20px 14px;
+            18px 12px;
 
         border-radius: 18px;
 
     }
 
 
-    /* Header */
+    /* Title */
 
     .game-header h2 {
 
-        font-size: 23px;
+        font-size: 22px;
 
     }
 
 
     .eyebrow {
-
-        font-size: 7px;
-
-    }
-
-
-    .word-info span {
 
         font-size: 7px;
 
@@ -1362,20 +1242,11 @@ footer {
     }
 
 
-    /* Progress */
-
-    .progress-container {
-
-        margin-top: 14px;
-
-    }
-
-
     /* Hangman */
 
     .hangman-container {
 
-        height: 195px;
+        height: 190px;
 
     }
 
@@ -1383,7 +1254,7 @@ footer {
     .hangman {
 
         transform:
-            scale(0.83);
+            scale(0.78);
 
     }
 
@@ -1392,27 +1263,27 @@ footer {
 
     .word {
 
-        gap: 5px;
+        gap: 4px;
 
-        margin-bottom: 17px;
+        margin-bottom: 16px;
 
     }
 
 
     .word-letter {
 
-        width: 25px;
+        width: 24px;
 
-        height: 38px;
+        height: 37px;
+
+        font-size: 22px;
 
         border-bottom-width: 2px;
-
-        font-size: 24px;
 
     }
 
 
-    /* Guess */
+    /* Input */
 
     .guess-area {
 
@@ -1437,23 +1308,23 @@ footer {
         height: 48px;
 
         padding:
-            0 18px;
+            0 17px;
 
     }
 
 
     .keyboard-message {
 
-        font-size: 9px;
+        font-size: 8px;
 
     }
 
 
-    /* Wrong letters */
+    /* Wrong */
 
     .wrong-letters {
 
-        font-size: 10px;
+        font-size: 9px;
 
         letter-spacing: 2px;
 
@@ -1464,9 +1335,7 @@ footer {
 
     footer {
 
-        font-size: 7px;
-
-        gap: 6px;
+        font-size: 6.5px;
 
     }
 
@@ -1474,17 +1343,10 @@ footer {
 
 
 /* =========================================================
-   SMALL PHONES
+   VERY SMALL PHONES
 ========================================================= */
 
 @media (max-width: 380px) {
-
-    .app {
-
-        padding:
-            10px 8px;
-
-    }
 
 
     .brand-text {
@@ -1496,7 +1358,7 @@ footer {
 
     .score-item {
 
-        min-width: 46px;
+        min-width: 44px;
 
     }
 
@@ -1504,14 +1366,14 @@ footer {
     .game-card {
 
         padding:
-            18px 11px;
+            17px 10px;
 
     }
 
 
     .hangman-container {
 
-        height: 180px;
+        height: 175px;
 
     }
 
@@ -1519,16 +1381,16 @@ footer {
     .hangman {
 
         transform:
-            scale(0.72);
+            scale(0.70);
 
     }
 
 
     .word-letter {
 
-        width: 22px;
+        width: 21px;
 
-        font-size: 21px;
+        font-size: 20px;
 
     }
 
@@ -1536,9 +1398,9 @@ footer {
     #guess-button {
 
         padding:
-            0 14px;
+            0 13px;
 
-        font-size: 9px;
+        font-size: 8px;
 
     }
 
