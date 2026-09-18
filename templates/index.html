@@ -30,9 +30,7 @@
 <main class="app">
 
 
-    <!-- =================================================
-         HEADER
-    ================================================== -->
+    <!-- HEADER -->
 
     <header class="top-bar">
 
@@ -90,6 +88,19 @@
             <div class="score-item">
 
                 <span>
+                    WIN RATE
+                </span>
+
+                <strong id="win-rate">
+                    —
+                </strong>
+
+            </div>
+
+
+            <div class="score-item">
+
+                <span>
                     CHANCES
                 </span>
 
@@ -104,9 +115,7 @@
     </header>
 
 
-    <!-- =================================================
-         GAME CARD
-    ================================================== -->
+    <!-- GAME CARD -->
 
     <section class="game-card">
 
@@ -143,9 +152,7 @@
         </div>
 
 
-        <!-- =================================================
-             HANGMAN
-        ================================================== -->
+        <!-- HANGMAN -->
 
         <div class="hangman-container">
 
@@ -186,9 +193,7 @@
         </div>
 
 
-        <!-- =================================================
-             WORD
-        ================================================== -->
+        <!-- WORD -->
 
         <div
             id="word"
@@ -196,7 +201,7 @@
         ></div>
 
 
-        <!-- Invisible input -->
+        <!-- INVISIBLE INPUT -->
 
         <input
             id="keyboard-input"
@@ -212,9 +217,7 @@
         >
 
 
-        <!-- =================================================
-             MOBILE KEYBOARD
-        ================================================== -->
+        <!-- MOBILE KEYBOARD -->
 
         <div
             id="mobile-keyboard"
@@ -224,154 +227,51 @@
 
             <div class="keyboard-row">
 
-                <button
-                    type="button"
-                    data-letter="q"
-                >Q</button>
-
-                <button
-                    type="button"
-                    data-letter="w"
-                >W</button>
-
-                <button
-                    type="button"
-                    data-letter="e"
-                >E</button>
-
-                <button
-                    type="button"
-                    data-letter="r"
-                >R</button>
-
-                <button
-                    type="button"
-                    data-letter="t"
-                >T</button>
-
-                <button
-                    type="button"
-                    data-letter="y"
-                >Y</button>
-
-                <button
-                    type="button"
-                    data-letter="u"
-                >U</button>
-
-                <button
-                    type="button"
-                    data-letter="i"
-                >I</button>
-
-                <button
-                    type="button"
-                    data-letter="o"
-                >O</button>
-
-                <button
-                    type="button"
-                    data-letter="p"
-                >P</button>
+                <button type="button" data-letter="q">Q</button>
+                <button type="button" data-letter="w">W</button>
+                <button type="button" data-letter="e">E</button>
+                <button type="button" data-letter="r">R</button>
+                <button type="button" data-letter="t">T</button>
+                <button type="button" data-letter="y">Y</button>
+                <button type="button" data-letter="u">U</button>
+                <button type="button" data-letter="i">I</button>
+                <button type="button" data-letter="o">O</button>
+                <button type="button" data-letter="p">P</button>
 
             </div>
 
 
             <div class="keyboard-row">
 
-                <button
-                    type="button"
-                    data-letter="a"
-                >A</button>
-
-                <button
-                    type="button"
-                    data-letter="s"
-                >S</button>
-
-                <button
-                    type="button"
-                    data-letter="d"
-                >D</button>
-
-                <button
-                    type="button"
-                    data-letter="f"
-                >F</button>
-
-                <button
-                    type="button"
-                    data-letter="g"
-                >G</button>
-
-                <button
-                    type="button"
-                    data-letter="h"
-                >H</button>
-
-                <button
-                    type="button"
-                    data-letter="j"
-                >J</button>
-
-                <button
-                    type="button"
-                    data-letter="k"
-                >K</button>
-
-                <button
-                    type="button"
-                    data-letter="l"
-                >L</button>
+                <button type="button" data-letter="a">A</button>
+                <button type="button" data-letter="s">S</button>
+                <button type="button" data-letter="d">D</button>
+                <button type="button" data-letter="f">F</button>
+                <button type="button" data-letter="g">G</button>
+                <button type="button" data-letter="h">H</button>
+                <button type="button" data-letter="j">J</button>
+                <button type="button" data-letter="k">K</button>
+                <button type="button" data-letter="l">L</button>
 
             </div>
 
 
             <div class="keyboard-row">
 
-                <button
-                    type="button"
-                    data-letter="z"
-                >Z</button>
-
-                <button
-                    type="button"
-                    data-letter="x"
-                >X</button>
-
-                <button
-                    type="button"
-                    data-letter="c"
-                >C</button>
-
-                <button
-                    type="button"
-                    data-letter="v"
-                >V</button>
-
-                <button
-                    type="button"
-                    data-letter="b"
-                >B</button>
-
-                <button
-                    type="button"
-                    data-letter="n"
-                >N</button>
-
-                <button
-                    type="button"
-                    data-letter="m"
-                >M</button>
+                <button type="button" data-letter="z">Z</button>
+                <button type="button" data-letter="x">X</button>
+                <button type="button" data-letter="c">C</button>
+                <button type="button" data-letter="v">V</button>
+                <button type="button" data-letter="b">B</button>
+                <button type="button" data-letter="n">N</button>
+                <button type="button" data-letter="m">M</button>
 
             </div>
 
         </div>
 
 
-        <!-- =================================================
-             WRONG LETTERS
-        ================================================== -->
+        <!-- WRONG LETTERS -->
 
         <div class="wrong-section">
 
@@ -397,9 +297,7 @@
         ></div>
 
 
-        <!-- =================================================
-             RESULT POPUP
-        ================================================== -->
+        <!-- RESULT POPUP -->
 
         <div
             id="game-result"
@@ -489,7 +387,6 @@
         </span>
 
     </footer>
-
 
 </main>
 
