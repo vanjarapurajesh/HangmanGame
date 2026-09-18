@@ -2,6 +2,7 @@
 <html lang="en">
 
 <head>
+
     <meta charset="UTF-8">
 
     <meta
@@ -9,7 +10,10 @@
         content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
     >
 
-    <meta name="theme-color" content="#08090d">
+    <meta
+        name="theme-color"
+        content="#08090d"
+    >
 
     <title>Hangman — Word Challenge</title>
 
@@ -17,6 +21,7 @@
         rel="stylesheet"
         href="{{ url_for('static', filename='css/style.css') }}"
     >
+
 </head>
 
 
@@ -24,7 +29,11 @@
 
 <main class="app">
 
-    <!-- HEADER -->
+
+    <!-- =================================================
+         HEADER
+    ================================================== -->
+
     <header class="top-bar">
 
         <div class="brand">
@@ -34,29 +43,60 @@
             </div>
 
             <div class="brand-text">
-                <h1>HANGMAN</h1>
-                <span>WORD CHALLENGE</span>
+
+                <h1>
+                    HANGMAN
+                </h1>
+
+                <span>
+                    WORD CHALLENGE
+                </span>
+
             </div>
 
         </div>
 
 
         <!-- SCOREBOARD -->
+
         <div class="scoreboard">
 
             <div class="score-item">
-                <span>SCORE</span>
-                <strong id="score">—</strong>
+
+                <span>
+                    SCORE
+                </span>
+
+                <strong id="score">
+                    —
+                </strong>
+
             </div>
 
-            <div class="score-item">
-                <span>BEST</span>
-                <strong id="best-score">—</strong>
-            </div>
 
             <div class="score-item">
-                <span>CHANCES</span>
-                <strong id="chances">10</strong>
+
+                <span>
+                    TOTAL SCORE
+                </span>
+
+                <strong id="total-score">
+                    —
+                </strong>
+
+            </div>
+
+
+            <div class="score-item">
+
+                <span>
+                    CHANCES
+                </span>
+
+                <strong id="chances">
+                    10
+                </strong>
+
             </div>
 
         </div>
@@ -64,11 +104,15 @@
     </header>
 
 
-    <!-- GAME CARD -->
+    <!-- =================================================
+         GAME CARD
+    ================================================== -->
+
     <section class="game-card">
 
 
         <!-- GAME HEADER -->
+
         <div class="game-header">
 
             <div>
@@ -86,7 +130,9 @@
 
             <div class="word-info">
 
-                <span>LETTERS</span>
+                <span>
+                    LETTERS
+                </span>
 
                 <strong id="word-length">
                     —
@@ -97,7 +143,10 @@
         </div>
 
 
-        <!-- HANGMAN -->
+        <!-- =================================================
+             HANGMAN
+        ================================================== -->
+
         <div class="hangman-container">
 
             <div class="hangman">
@@ -137,25 +186,18 @@
         </div>
 
 
-        <!-- WORD -->
+        <!-- =================================================
+             WORD
+        ================================================== -->
+
         <div
             id="word"
             class="word"
-            tabindex="0"
-            role="button"
-            aria-label="Word"
         ></div>
 
 
-        <!--
-            Invisible input.
+        <!-- Invisible input -->
 
-            This is NOT used to open the system keyboard.
-            JavaScript prevents the mobile system keyboard
-            from being used.
-
-            It exists only as a safe keyboard event target.
-        -->
         <input
             id="keyboard-input"
             class="keyboard-input"
@@ -170,7 +212,10 @@
         >
 
 
-        <!-- MOBILE KEYBOARD -->
+        <!-- =================================================
+             MOBILE KEYBOARD
+        ================================================== -->
+
         <div
             id="mobile-keyboard"
             class="mobile-keyboard"
@@ -179,51 +224,155 @@
 
             <div class="keyboard-row">
 
-                <button type="button" data-letter="q">Q</button>
-                <button type="button" data-letter="w">W</button>
-                <button type="button" data-letter="e">E</button>
-                <button type="button" data-letter="r">R</button>
-                <button type="button" data-letter="t">T</button>
-                <button type="button" data-letter="y">Y</button>
-                <button type="button" data-letter="u">U</button>
-                <button type="button" data-letter="i">I</button>
-                <button type="button" data-letter="o">O</button>
-                <button type="button" data-letter="p">P</button>
+                <button
+                    type="button"
+                    data-letter="q"
+                >Q</button>
+
+                <button
+                    type="button"
+                    data-letter="w"
+                >W</button>
+
+                <button
+                    type="button"
+                    data-letter="e"
+                >E</button>
+
+                <button
+                    type="button"
+                    data-letter="r"
+                >R</button>
+
+                <button
+                    type="button"
+                    data-letter="t"
+                >T</button>
+
+                <button
+                    type="button"
+                    data-letter="y"
+                >Y</button>
+
+                <button
+                    type="button"
+                    data-letter="u"
+                >U</button>
+
+                <button
+                    type="button"
+                    data-letter="i"
+                >I</button>
+
+                <button
+                    type="button"
+                    data-letter="o"
+                >O</button>
+
+                <button
+                    type="button"
+                    data-letter="p"
+                >P</button>
 
             </div>
 
 
             <div class="keyboard-row">
 
-                <button type="button" data-letter="a">A</button>
-                <button type="button" data-letter="s">S</button>
-                <button type="button" data-letter="d">D</button>
-                <button type="button" data-letter="f">F</button>
-                <button type="button" data-letter="g">G</button>
-                <button type="button" data-letter="h">H</button>
-                <button type="button" data-letter="j">J</button>
-                <button type="button" data-letter="k">K</button>
-                <button type="button" data-letter="l">L</button>
+                <button
+                    type="button"
+                    data-letter="a"
+                >A</button>
+
+                <button
+                    type="button"
+                    data-letter="s"
+                >S</button>
+
+                <button
+                    type="button"
+                    data-letter="d"
+                >D</button>
+
+                <button
+                    type="button"
+                    data-letter="f"
+                >F</button>
+
+                <button
+                    type="button"
+                    data-letter="g"
+                >G</button>
+
+                <button
+                    type="button"
+                    data-letter="h"
+                >H</button>
+
+                <button
+                    type="button"
+                    data-letter="j"
+                >J</button>
+
+                <button
+                    type="button"
+                    data-letter="k"
+                >K</button>
+
+                <button
+                    type="button"
+                    data-letter="l"
+                >L</button>
 
             </div>
 
 
             <div class="keyboard-row">
 
-                <button type="button" data-letter="z">Z</button>
-                <button type="button" data-letter="x">X</button>
-                <button type="button" data-letter="c">C</button>
-                <button type="button" data-letter="v">V</button>
-                <button type="button" data-letter="b">B</button>
-                <button type="button" data-letter="n">N</button>
-                <button type="button" data-letter="m">M</button>
+                <button
+                    type="button"
+                    data-letter="z"
+                >Z</button>
+
+                <button
+                    type="button"
+                    data-letter="x"
+                >X</button>
+
+                <button
+                    type="button"
+                    data-letter="c"
+                >C</button>
+
+                <button
+                    type="button"
+                    data-letter="v"
+                >V</button>
+
+                <button
+                    type="button"
+                    data-letter="b"
+                >B</button>
+
+                <button
+                    type="button"
+                    data-letter="n"
+                >N</button>
+
+                <button
+                    type="button"
+                    data-letter="m"
+                >M</button>
 
             </div>
 
         </div>
 
 
-        <!-- WRONG LETTERS -->
+        <!-- =================================================
+             WRONG LETTERS
+        ================================================== -->
+
         <div class="wrong-section">
 
             <span class="section-title">
@@ -241,13 +390,17 @@
 
 
         <!-- MESSAGE -->
+
         <div
             id="message"
             class="message"
         ></div>
 
 
-        <!-- RESULT POPUP -->
+        <!-- =================================================
+             RESULT POPUP
+        ================================================== -->
+
         <div
             id="game-result"
             class="game-result hidden"
@@ -270,6 +423,7 @@
                     Excellent! You found the word.
                 </p>
 
+
                 <div class="result-word">
 
                     <span>
@@ -282,6 +436,7 @@
 
                 </div>
 
+
                 <div class="final-score">
 
                     <span>
@@ -293,6 +448,7 @@
                     </strong>
 
                 </div>
+
 
                 <button
                     id="restart-button"
@@ -309,21 +465,31 @@
 
 
     <!-- FOOTER -->
+
     <footer>
 
-        <span>HANGMAN</span>
+        <span>
+            HANGMAN
+        </span>
 
-        <span>•</span>
+        <span>
+            •
+        </span>
 
-        <span>10 CHANCES</span>
+        <span>
+            10 CHANCES
+        </span>
 
-        <span>•</span>
+        <span>
+            •
+        </span>
 
         <span id="keyboard-status">
             SYSTEM KEYBOARD
         </span>
 
     </footer>
+
 
 </main>
 
