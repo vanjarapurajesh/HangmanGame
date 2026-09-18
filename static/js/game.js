@@ -42,6 +42,11 @@ const totalScoreElement =
         "total-score"
     );
 
+const winRateElement =
+    document.getElementById(
+        "win-rate"
+    );
+
 const gameResult =
     document.getElementById(
         "game-result"
@@ -144,22 +149,24 @@ function setupKeyboardMode() {
 
         keyboardStatus.textContent =
             "PHYSICAL KEYBOARD";
+
     }
 
 }
 
 
 /* =========================================================
-   SCORE
+   SCORE + STATISTICS
 ========================================================= */
 
 function updateScore(
     score,
-    totalScore
+    totalScore,
+    winRate
 ) {
 
     /*
-        Current word:
+        Current word score
 
         Win = 1
         Otherwise = —
@@ -174,14 +181,14 @@ function updateScore(
 
         scoreElement.textContent =
             "—";
+
     }
 
 
     /*
-        Total score:
+        Total score
 
-        Number of words successfully
-        completed by the player.
+        Number of words won.
     */
 
     if (totalScore > 0) {
@@ -193,6 +200,27 @@ function updateScore(
 
         totalScoreElement.textContent =
             "—";
+
+    }
+
+
+    /*
+        Win rate
+    */
+
+    if (
+        winRate !== null &&
+        winRate !== undefined
+    ) {
+
+        winRateElement.textContent =
+            `${winRate}%`;
+
+    } else {
+
+        winRateElement.textContent =
+            "—";
+
     }
 
 }
@@ -294,7 +322,8 @@ function updateGame(game) {
 
     updateScore(
         game.score,
-        game.total_score
+        game.total_score,
+        game.win_rate
     );
 
 
@@ -383,6 +412,7 @@ function renderWrongLetters(
             "None";
 
         return;
+
     }
 
 
@@ -450,7 +480,7 @@ function updateHangman(
 
 
 /* =========================================================
-   UPDATE MOBILE KEYBOARD
+   MOBILE KEYBOARD
 ========================================================= */
 
 function updateKeyboard() {
@@ -572,6 +602,7 @@ keyboardButtons.forEach(
                 ) {
 
                     return;
+
                 }
 
 
@@ -590,6 +621,7 @@ keyboardButtons.forEach(
                     );
 
                     return;
+
                 }
 
 
@@ -598,6 +630,7 @@ keyboardButtons.forEach(
                 ) {
 
                     return;
+
                 }
 
 
@@ -631,6 +664,7 @@ document.addEventListener(
         ) {
 
             return;
+
         }
 
 
@@ -639,6 +673,7 @@ document.addEventListener(
         ) {
 
             return;
+
         }
 
 
@@ -649,6 +684,7 @@ document.addEventListener(
         ) {
 
             return;
+
         }
 
 
@@ -663,6 +699,7 @@ document.addEventListener(
         ) {
 
             return;
+
         }
 
 
@@ -680,6 +717,7 @@ document.addEventListener(
             );
 
             return;
+
         }
 
 
@@ -688,6 +726,7 @@ document.addEventListener(
         ) {
 
             return;
+
         }
 
 
@@ -715,17 +754,13 @@ async function submitGuess(
     ) {
 
         return;
+
     }
 
 
     submitting =
         true;
 
-
-    /*
-        Remember immediately to prevent
-        duplicate requests.
-    */
 
     guessedLetters.add(
         letter
@@ -848,13 +883,7 @@ function showResult(game) {
     );
 
 
-    /*
-        Only a winning word gets 1 point.
-    */
-
-    if (
-        game.won
-    ) {
+    if (game.won) {
 
         finalScoreElement.textContent =
             "1";
@@ -881,66 +910,6 @@ function showResult(game) {
 
         resultText.textContent =
             "You used all 10 chances.";
-
-    }
-
-
-    /*
-        Show answer when game finishes.
-    */
-
-    if (
-        game.won ||
-        game.game_over
-    ) {
-
-        /*
-            The actual answer is returned
-            separately by /api/guess.
-        */
-
-        fetchAnswer();
-
-    }
-
-}
-
-
-/* =========================================================
-   FETCH ANSWER AFTER GAME
-========================================================= */
-
-async function fetchAnswer() {
-
-    try {
-
-        const response =
-            await fetch(
-                "/api/game",
-                {
-                    cache: "no-store"
-                }
-            );
-
-
-        const game =
-            await response.json();
-
-
-        /*
-            The masked word cannot reveal
-            the complete answer.
-
-            The answer is already supplied
-            by /api/guess when the game ends.
-        */
-
-    } catch (error) {
-
-        console.error(
-            "ANSWER ERROR:",
-            error
-        );
 
     }
 
@@ -974,6 +943,7 @@ restartButton.addEventListener(
         ) {
 
             return;
+
         }
 
 
