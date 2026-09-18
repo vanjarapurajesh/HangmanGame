@@ -1,31 +1,13 @@
 from flask import Flask, render_template, request, jsonify, session
-from pathlib import Path
 import random
-
-
-# =========================================================
-# APP SETTINGS
-# =========================================================
+import os
 
 app = Flask(__name__)
 
-app.secret_key = "change-this-secret-key"
+# Required for Flask sessions
+app.secret_key = "hangman-secret-key-change-this"
 
-
-# =========================================================
-# GAME SETTINGS
-# =========================================================
-
-MAX_WRONG_GUESSES = 10
-
-
-# =========================================================
-# WORD FILE
-# =========================================================
-
-BASE_DIR = Path(__file__).resolve().parent
-
-WORDS_FILE = BASE_DIR / "data" / "words.txt"
+MAX_CHANCES = 10
 
 
 # =========================================================
@@ -34,95 +16,96 @@ WORDS_FILE = BASE_DIR / "data" / "words.txt"
 
 def load_words():
 
-    if not WORDS_FILE.exists():
-        raise FileNotFoundError(
-            "data/words.txt was not found."
-        )
+    file_path = os.path.join(
+        app.root_path,
+        "data",
+        "words.txt"
+    )
 
-    words = []
+    try:
 
-    with open(
-        WORDS_FILE,
-        "r",
-        encoding="utf-8"
-    ) as file:
+        with open(
+            file_path,
+            "r",
+            encoding="utf-8"
+        ) as file:
 
-        for line in file:
+            words = [
+                line.strip().lower()
+                for line in file
+                if line.strip().isalpha()
+            ]
 
-            word = line.strip().lower()
+        if not words:
+            raise ValueError("Word list is empty.")
 
-            # Only alphabetic words
-            if word.isalpha():
-                words.append(word)
+        return words
 
-    # Remove duplicates
-    words = sorted(set(words))
+    except Exception as error:
 
-    if not words:
-        raise ValueError(
-            "No words found in data/words.txt"
-        )
+        print("WORD LIST ERROR:", error)
 
-    return words
+        return [
+            "apple",
+            "orange",
+            "banana",
+            "coconut",
+            "pineapple"
+        ]
+
+
+WORDS = load_words()
 
 
 # =========================================================
-# START NEW GAME
+# CREATE NEW GAME
 # =========================================================
 
-def start_new_game():
+def create_game():
 
-    words = load_words()
+    answer = random.choice(WORDS)
 
-    session.clear()
-
-    session["answer"] = random.choice(words)
-
+    session["answer"] = answer
     session["guessed_letters"] = []
-
     session["wrong_letters"] = []
-
     session["wrong_guesses"] = 0
 
+    # Current word score
     session["score"] = 0
 
-    session["game_over"] = False
-
-    session["won"] = False
-
-
-# =========================================================
-# CHECK SESSION
-# =========================================================
-
-def ensure_game():
-
-    required_keys = [
-        "answer",
-        "guessed_letters",
-        "wrong_letters",
-        "wrong_guesses",
-        "score",
-        "game_over",
-        "won"
-    ]
-
-    for key in required_keys:
-
-        if key not in session:
-
-            start_new_game()
-
-            return
+    # Total successfully completed words
+    # DO NOT reset this when starting a new game.
+    if "total_score" not in session:
+        session["total_score"] = 0
 
 
 # =========================================================
-# GET GAME STATE
+# GET CURRENT GAME
 # =========================================================
 
-def get_game_state():
+def get_game():
 
-    ensure_game()
+    # Protect against old/incomplete sessions
+    if (
+        "answer" not in session
+        or "guessed_letters" not in session
+        or "wrong_letters" not in session
+        or "wrong_guesses" not in session
+        or "score" not in session
+        or "total_score" not in session
+    ):
+
+        old_total = session.get(
+            "total_score",
+            0
+        )
+
+        session.clear()
+
+        session["total_score"] = old_total
+
+        create_game()
+
 
     answer = session["answer"]
 
@@ -130,66 +113,84 @@ def get_game_state():
         "guessed_letters"
     ]
 
-    display_word = ""
+    wrong_letters = session[
+        "wrong_letters"
+    ]
+
+    wrong_guesses = session[
+        "wrong_guesses"
+    ]
+
+    masked_word = ""
 
     for letter in answer:
 
         if letter in guessed_letters:
-
-            display_word += letter
+            masked_word += letter
 
         else:
+            masked_word += "_"
 
-            display_word += "_"
 
+    won = "_" not in masked_word
 
-    remaining_chances = (
-        MAX_WRONG_GUESSES
-        - session["wrong_guesses"]
+    lost = (
+        wrong_guesses >= MAX_CHANCES
     )
+
+    game_over = won or lost
 
 
     return {
-
-        "word": display_word,
-
-        "word_length": len(answer),
-
-        "guessed_letters":
-            session["guessed_letters"],
-
-        "wrong_letters":
-            session["wrong_letters"],
-
-        "wrong_guesses":
-            session["wrong_guesses"],
+        "word": masked_word,
 
         "remaining_chances":
-            remaining_chances,
+            max(
+                0,
+                MAX_CHANCES - wrong_guesses
+            ),
 
-        "max_wrong_guesses":
-            MAX_WRONG_GUESSES,
+        "word_length":
+            len(answer),
+
+        "wrong_letters":
+            wrong_letters,
+
+        "wrong_guesses":
+            wrong_guesses,
+
+        "guessed_letters":
+            guessed_letters,
 
         "score":
             session["score"],
 
+        "total_score":
+            session["total_score"],
+
         "game_over":
-            session["game_over"],
+            game_over,
 
         "won":
-            session["won"]
-
+            won
     }
 
 
 # =========================================================
-# HOME PAGE
+# HOME
 # =========================================================
 
 @app.route("/")
 def index():
 
-    ensure_game()
+    if "answer" not in session:
+
+        create_game()
+
+    else:
+
+        # Make sure old sessions are valid
+        get_game()
 
     return render_template(
         "index.html"
@@ -197,7 +198,7 @@ def index():
 
 
 # =========================================================
-# GET CURRENT GAME
+# GET GAME
 # =========================================================
 
 @app.route(
@@ -206,10 +207,12 @@ def index():
 )
 def api_game():
 
-    ensure_game()
+    if "answer" not in session:
+
+        create_game()
 
     return jsonify(
-        get_game_state()
+        get_game()
     )
 
 
@@ -221,265 +224,191 @@ def api_game():
     "/api/guess",
     methods=["POST"]
 )
-def api_guess():
+def guess():
 
-    try:
+    data = request.get_json(
+        silent=True
+    ) or {}
 
-        ensure_game()
-
-
-        # -------------------------------------------------
-        # GAME ALREADY FINISHED
-        # -------------------------------------------------
-
-        if session["game_over"]:
-
-            return jsonify({
-
-                "success": False,
-
-                "message":
-                    "The game is already over.",
-
-                "game":
-                    get_game_state()
-
-            })
+    letter = str(
+        data.get("letter", "")
+    ).lower().strip()
 
 
-        # -------------------------------------------------
-        # GET REQUEST DATA
-        # -------------------------------------------------
+    # Validate input
+    if (
+        len(letter) != 1
+        or not letter.isalpha()
+        or not letter.isascii()
+    ):
 
-        data = request.get_json(
-            silent=True
+        return jsonify({
+            "message":
+                "Please enter one valid letter."
+        }), 400
+
+
+    # Make sure game exists
+    if "answer" not in session:
+
+        create_game()
+
+
+    answer = session["answer"]
+
+    guessed_letters = session[
+        "guessed_letters"
+    ]
+
+
+    # =====================================================
+    # REPEATED GUESS
+    # =====================================================
+
+    if letter in guessed_letters:
+
+        return jsonify({
+            "message":
+                f'"{letter.upper()}" was already guessed!',
+            "game":
+                get_game()
+        })
+
+
+    # Add guessed letter
+    guessed_letters.append(
+        letter
+    )
+
+    session["guessed_letters"] = \
+        guessed_letters
+
+
+    # =====================================================
+    # CORRECT GUESS
+    # =====================================================
+
+    if letter in answer:
+
+        message = (
+            f'"{letter.upper()}" is correct!'
         )
 
 
-        if not data:
+    # =====================================================
+    # WRONG GUESS
+    # =====================================================
 
-            return jsonify({
+    else:
 
-                "success": False,
+        session["wrong_guesses"] += 1
 
-                "message":
-                    "Invalid request."
-
-            })
-
-
-        letter = str(
-            data.get(
-                "letter",
-                ""
-            )
-        ).strip().lower()
-
-
-        # -------------------------------------------------
-        # VALIDATE LETTER
-        # -------------------------------------------------
-
-        if (
-            len(letter) != 1
-            or not letter.isalpha()
-        ):
-
-            return jsonify({
-
-                "success": False,
-
-                "message":
-                    "Please enter one letter.",
-
-                "game":
-                    get_game_state()
-
-            })
-
-
-        answer = session["answer"]
-
-        guessed_letters = (
-            session["guessed_letters"]
+        session["wrong_letters"].append(
+            letter
         )
 
-        wrong_letters = (
-            session["wrong_letters"]
+        message = (
+            f'"{letter.upper()}" is not in the word.'
         )
 
 
-        # -------------------------------------------------
-        # DUPLICATE GUESS
-        # -------------------------------------------------
+    # =====================================================
+    # CHECK IF WORD IS COMPLETE
+    # =====================================================
 
-        if letter in guessed_letters:
+    masked_word = ""
 
-            return jsonify({
+    for character in answer:
 
-                "success": False,
+        if character in session[
+            "guessed_letters"
+        ]:
 
-                "message":
-                    f"You already guessed "
-                    f"'{letter.upper()}'.",
-
-                "game":
-                    get_game_state()
-
-            })
-
-
-        # -------------------------------------------------
-        # SAVE GUESS
-        # -------------------------------------------------
-
-        guessed_letters.append(letter)
-
-        session["guessed_letters"] = (
-            guessed_letters
-        )
-
-
-        # -------------------------------------------------
-        # CORRECT GUESS
-        # -------------------------------------------------
-
-        if letter in answer:
-
-            # Every correct letter = 1 point
-            session["score"] += 1
-
-            message = "Correct! +1"
-
-
-        # -------------------------------------------------
-        # WRONG GUESS
-        # -------------------------------------------------
+            masked_word += character
 
         else:
 
-            wrong_letters.append(letter)
-
-            session["wrong_letters"] = (
-                wrong_letters
-            )
-
-            session["wrong_guesses"] += 1
-
-            # Wrong guess = 0 points
-            message = "Wrong guess!"
+            masked_word += "_"
 
 
-        # -------------------------------------------------
-        # CHECK WIN
-        # -------------------------------------------------
+    # =====================================================
+    # PLAYER WON
+    # =====================================================
 
-        won = all(
-            character in guessed_letters
-            for character in answer
+    if "_" not in masked_word:
+
+        # EXACTLY 1 POINT FOR COMPLETING WORD
+        session["score"] = 1
+
+        # Total score = total words won
+        session["total_score"] += 1
+
+        message = (
+            "🎉 You completed the word! +1 point"
         )
 
 
-        if won:
+    # =====================================================
+    # PLAYER LOST
+    # =====================================================
 
-            session["game_over"] = True
+    elif (
+        session["wrong_guesses"]
+        >= MAX_CHANCES
+    ):
 
-            session["won"] = True
+        # No points for losing
+        session["score"] = 0
 
-            message = "You found the word!"
-
-
-        # -------------------------------------------------
-        # CHECK LOSS
-        # -------------------------------------------------
-
-        elif (
-            session["wrong_guesses"]
-            >= MAX_WRONG_GUESSES
-        ):
-
-            session["game_over"] = True
-
-            session["won"] = False
-
-            message = "Game over!"
-
-
-        # -------------------------------------------------
-        # RESPONSE
-        # -------------------------------------------------
-
-        response = {
-
-            "success": True,
-
-            "message": message,
-
-            "game":
-                get_game_state()
-
-        }
-
-
-        # Reveal answer only after game ends
-        if session["game_over"]:
-
-            response["answer"] = answer
-
-
-        return jsonify(
-            response
+        message = (
+            "Game over! Better luck next time."
         )
 
 
-    except Exception as error:
+    return jsonify({
 
-        print()
-        print("=" * 60)
-        print("HANGMAN ERROR")
-        print("=" * 60)
-        print(error)
-        print("=" * 60)
-        print()
+        "message": message,
 
+        "game": get_game(),
 
-        return jsonify({
-
-            "success": False,
-
-            "message":
-                "Server error. Check the Flask terminal."
-
-        }), 500
+        "answer":
+            answer
+            if get_game()["game_over"]
+            else None
+    })
 
 
 # =========================================================
-# RESTART GAME
+# RESTART
 # =========================================================
 
 @app.route(
     "/api/restart",
     methods=["POST"]
 )
-def api_restart():
+def restart():
 
-    start_new_game()
+    # Save total score
+    total_score = session.get(
+        "total_score",
+        0
+    )
+
+    # Create fresh game
+    session.clear()
+
+    session["total_score"] = \
+        total_score
+
+    create_game()
 
     return jsonify({
-
-        "success": True,
-
-        "message":
-            "New game started.",
-
-        "game":
-            get_game_state()
-
+        "game": get_game()
     })
 
 
 # =========================================================
-# RUN SERVER
+# RUN
 # =========================================================
 
 if __name__ == "__main__":
