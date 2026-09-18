@@ -4,7 +4,6 @@ import os
 
 app = Flask(__name__)
 
-# Required for Flask sessions
 app.secret_key = "hangman-secret-key-change-this"
 
 MAX_CHANCES = 10
@@ -70,13 +69,15 @@ def create_game():
     session["wrong_letters"] = []
     session["wrong_guesses"] = 0
 
-    # Current word score
+    # Score for the current word
     session["score"] = 0
 
-    # Total successfully completed words
-    # DO NOT reset this when starting a new game.
+    # Keep statistics across games
     if "total_score" not in session:
         session["total_score"] = 0
+
+    if "games_played" not in session:
+        session["games_played"] = 0
 
 
 # =========================================================
@@ -85,24 +86,37 @@ def create_game():
 
 def get_game():
 
-    # Protect against old/incomplete sessions
-    if (
-        "answer" not in session
-        or "guessed_letters" not in session
-        or "wrong_letters" not in session
-        or "wrong_guesses" not in session
-        or "score" not in session
-        or "total_score" not in session
-    ):
+    required_keys = [
+        "answer",
+        "guessed_letters",
+        "wrong_letters",
+        "wrong_guesses",
+        "score",
+        "total_score",
+        "games_played"
+    ]
 
-        old_total = session.get(
+    missing_key = any(
+        key not in session
+        for key in required_keys
+    )
+
+    if missing_key:
+
+        total_score = session.get(
             "total_score",
+            0
+        )
+
+        games_played = session.get(
+            "games_played",
             0
         )
 
         session.clear()
 
-        session["total_score"] = old_total
+        session["total_score"] = total_score
+        session["games_played"] = games_played
 
         create_game()
 
@@ -121,16 +135,27 @@ def get_game():
         "wrong_guesses"
     ]
 
+
+    # =====================================================
+    # MASK WORD
+    # =====================================================
+
     masked_word = ""
 
     for letter in answer:
 
         if letter in guessed_letters:
+
             masked_word += letter
 
         else:
+
             masked_word += "_"
 
+
+    # =====================================================
+    # GAME STATUS
+    # =====================================================
 
     won = "_" not in masked_word
 
@@ -141,13 +166,46 @@ def get_game():
     game_over = won or lost
 
 
+    # =====================================================
+    # WIN RATE
+    # =====================================================
+
+    games_played = session[
+        "games_played"
+    ]
+
+    total_score = session[
+        "total_score"
+    ]
+
+    if games_played > 0:
+
+        win_rate = round(
+            (
+                total_score /
+                games_played
+            ) * 100
+        )
+
+    else:
+
+        win_rate = None
+
+
+    # =====================================================
+    # RETURN GAME DATA
+    # =====================================================
+
     return {
-        "word": masked_word,
+
+        "word":
+            masked_word,
 
         "remaining_chances":
             max(
                 0,
-                MAX_CHANCES - wrong_guesses
+                MAX_CHANCES -
+                wrong_guesses
             ),
 
         "word_length":
@@ -166,7 +224,13 @@ def get_game():
             session["score"],
 
         "total_score":
-            session["total_score"],
+            total_score,
+
+        "games_played":
+            games_played,
+
+        "win_rate":
+            win_rate,
 
         "game_over":
             game_over,
@@ -189,7 +253,6 @@ def index():
 
     else:
 
-        # Make sure old sessions are valid
         get_game()
 
     return render_template(
@@ -235,7 +298,10 @@ def guess():
     ).lower().strip()
 
 
-    # Validate input
+    # =====================================================
+    # VALIDATE LETTER
+    # =====================================================
+
     if (
         len(letter) != 1
         or not letter.isalpha()
@@ -243,12 +309,17 @@ def guess():
     ):
 
         return jsonify({
+
             "message":
                 "Please enter one valid letter."
+
         }), 400
 
 
-    # Make sure game exists
+    # =====================================================
+    # MAKE SURE GAME EXISTS
+    # =====================================================
+
     if "answer" not in session:
 
         create_game()
@@ -268,14 +339,20 @@ def guess():
     if letter in guessed_letters:
 
         return jsonify({
+
             "message":
                 f'"{letter.upper()}" was already guessed!',
+
             "game":
                 get_game()
+
         })
 
 
-    # Add guessed letter
+    # =====================================================
+    # ADD LETTER
+    # =====================================================
+
     guessed_letters.append(
         letter
     )
@@ -313,7 +390,7 @@ def guess():
 
 
     # =====================================================
-    # CHECK IF WORD IS COMPLETE
+    # CHECK WORD
     # =====================================================
 
     masked_word = ""
@@ -337,11 +414,14 @@ def guess():
 
     if "_" not in masked_word:
 
-        # EXACTLY 1 POINT FOR COMPLETING WORD
+        # Current word = 1 point
         session["score"] = 1
 
         # Total score = total words won
         session["total_score"] += 1
+
+        # One completed game
+        session["games_played"] += 1
 
         message = (
             "🎉 You completed the word! +1 point"
@@ -357,23 +437,35 @@ def guess():
         >= MAX_CHANCES
     ):
 
-        # No points for losing
+        # No point for losing
         session["score"] = 0
+
+        # Count completed game
+        session["games_played"] += 1
 
         message = (
             "Game over! Better luck next time."
         )
 
 
+    game = get_game()
+
+
+    # =====================================================
+    # RESPONSE
+    # =====================================================
+
     return jsonify({
 
-        "message": message,
+        "message":
+            message,
 
-        "game": get_game(),
+        "game":
+            game,
 
         "answer":
             answer
-            if get_game()["game_over"]
+            if game["game_over"]
             else None
     })
 
@@ -388,22 +480,35 @@ def guess():
 )
 def restart():
 
-    # Save total score
+    # Keep statistics
     total_score = session.get(
         "total_score",
         0
     )
 
-    # Create fresh game
+    games_played = session.get(
+        "games_played",
+        0
+    )
+
+
+    # Create new game
     session.clear()
 
     session["total_score"] = \
         total_score
 
+    session["games_played"] = \
+        games_played
+
     create_game()
 
+
     return jsonify({
-        "game": get_game()
+
+        "game":
+            get_game()
+
     })
 
 
