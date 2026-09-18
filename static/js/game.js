@@ -1,5 +1,6 @@
 "use strict";
 
+
 /* =========================================================
    ELEMENTS
 ========================================================= */
@@ -8,7 +9,9 @@ const wordElement =
     document.getElementById("word");
 
 const mobileKeyboard =
-    document.getElementById("mobile-keyboard");
+    document.getElementById(
+        "mobile-keyboard"
+    );
 
 const keyboardButtons =
     document.querySelectorAll(
@@ -19,10 +22,14 @@ const chancesElement =
     document.getElementById("chances");
 
 const wordLengthElement =
-    document.getElementById("word-length");
+    document.getElementById(
+        "word-length"
+    );
 
 const wrongLettersElement =
-    document.getElementById("wrong-letters");
+    document.getElementById(
+        "wrong-letters"
+    );
 
 const messageElement =
     document.getElementById("message");
@@ -30,32 +37,48 @@ const messageElement =
 const scoreElement =
     document.getElementById("score");
 
-const bestScoreElement =
-    document.getElementById("best-score");
+const totalScoreElement =
+    document.getElementById(
+        "total-score"
+    );
 
 const gameResult =
-    document.getElementById("game-result");
+    document.getElementById(
+        "game-result"
+    );
 
 const resultIcon =
-    document.getElementById("result-icon");
+    document.getElementById(
+        "result-icon"
+    );
 
 const resultTitle =
-    document.getElementById("result-title");
+    document.getElementById(
+        "result-title"
+    );
 
 const resultText =
-    document.getElementById("result-text");
+    document.getElementById(
+        "result-text"
+    );
 
 const answerElement =
     document.getElementById("answer");
 
 const finalScoreElement =
-    document.getElementById("final-score");
+    document.getElementById(
+        "final-score"
+    );
 
 const restartButton =
-    document.getElementById("restart-button");
+    document.getElementById(
+        "restart-button"
+    );
 
 const keyboardStatus =
-    document.getElementById("keyboard-status");
+    document.getElementById(
+        "keyboard-status"
+    );
 
 
 /* =========================================================
@@ -80,9 +103,11 @@ let gameFinished = false;
 
 let submitting = false;
 
-let guessedLetters = new Set();
+let guessedLetters =
+    new Set();
 
-let wrongLetters = new Set();
+let wrongLetters =
+    new Set();
 
 
 /* =========================================================
@@ -119,23 +144,7 @@ function setupKeyboardMode() {
 
         keyboardStatus.textContent =
             "PHYSICAL KEYBOARD";
-
     }
-
-}
-
-
-/* =========================================================
-   BEST SCORE
-========================================================= */
-
-function getBestScore() {
-
-    return Number(
-        localStorage.getItem(
-            "hangmanBestScore"
-        ) || 0
-    );
 
 }
 
@@ -144,7 +153,17 @@ function getBestScore() {
    SCORE
 ========================================================= */
 
-function updateScore(score) {
+function updateScore(
+    score,
+    totalScore
+) {
+
+    /*
+        Current word:
+
+        Win = 1
+        Otherwise = —
+    */
 
     if (score > 0) {
 
@@ -155,41 +174,25 @@ function updateScore(score) {
 
         scoreElement.textContent =
             "—";
-
     }
 
 
-    const oldBest =
-        getBestScore();
+    /*
+        Total score:
 
+        Number of words successfully
+        completed by the player.
+    */
 
-    if (score > oldBest) {
+    if (totalScore > 0) {
 
-        localStorage.setItem(
-            "hangmanBestScore",
-            score
-        );
-
-    }
-
-
-    const best =
-        Math.max(
-            score,
-            oldBest
-        );
-
-
-    if (best > 0) {
-
-        bestScoreElement.textContent =
-            best;
+        totalScoreElement.textContent =
+            totalScore;
 
     } else {
 
-        bestScoreElement.textContent =
+        totalScoreElement.textContent =
             "—";
-
     }
 
 }
@@ -274,11 +277,6 @@ function updateGame(game) {
     );
 
 
-    /*
-        IMPORTANT:
-        Keep all previously guessed letters.
-    */
-
     guessedLetters =
         new Set(
             game.guessed_letters || []
@@ -295,7 +293,8 @@ function updateGame(game) {
 
 
     updateScore(
-        game.score
+        game.score,
+        game.total_score
     );
 
 
@@ -384,7 +383,6 @@ function renderWrongLetters(
             "None";
 
         return;
-
     }
 
 
@@ -464,25 +462,12 @@ function updateKeyboard() {
                 button.dataset.letter;
 
 
-            /*
-                Remove old states.
-            */
-
             button.classList.remove(
                 "used",
                 "correct",
                 "wrong"
             );
 
-
-            /*
-                IMPORTANT:
-                Do NOT disable the button.
-
-                We need it clickable again so
-                we can show the repeated guess
-                message.
-            */
 
             button.disabled =
                 false;
@@ -531,7 +516,7 @@ function updateKeyboard() {
 
 
 /* =========================================================
-   REPEATED GUESS MESSAGE
+   REPEATED GUESS
 ========================================================= */
 
 function repeatedGuess(
@@ -542,10 +527,6 @@ function repeatedGuess(
         `"${letter.toUpperCase()}" was already guessed!`
     );
 
-
-    /*
-        Small visual feedback.
-    */
 
     const button =
         document.querySelector(
@@ -559,10 +540,6 @@ function repeatedGuess(
             "repeat-shake"
         );
 
-
-        /*
-            Force browser to restart animation.
-        */
 
         void button.offsetWidth;
 
@@ -595,18 +572,12 @@ keyboardButtons.forEach(
                 ) {
 
                     return;
-
                 }
 
 
                 const letter =
                     button.dataset.letter;
 
-
-                /*
-                    CHECK REPEATED GUESS
-                    BEFORE submitting.
-                */
 
                 if (
                     guessedLetters.has(
@@ -619,28 +590,16 @@ keyboardButtons.forEach(
                     );
 
                     return;
-
                 }
 
-
-                /*
-                    Prevent another request
-                    while current request is
-                    being processed.
-                */
 
                 if (
                     submitting
                 ) {
 
                     return;
-
                 }
 
-
-                /*
-                    Immediate visual feedback.
-                */
 
                 button.classList.add(
                     "used"
@@ -667,17 +626,11 @@ document.addEventListener(
     "keydown",
     function(event) {
 
-        /*
-            Mobile uses only the on-screen
-            keyboard.
-        */
-
         if (
             isMobileDevice()
         ) {
 
             return;
-
         }
 
 
@@ -686,7 +639,6 @@ document.addEventListener(
         ) {
 
             return;
-
         }
 
 
@@ -697,7 +649,6 @@ document.addEventListener(
         ) {
 
             return;
-
         }
 
 
@@ -712,17 +663,11 @@ document.addEventListener(
         ) {
 
             return;
-
         }
 
 
         event.preventDefault();
 
-
-        /*
-            CHECK REPEATED GUESS
-            BEFORE submitting.
-        */
 
         if (
             guessedLetters.has(
@@ -735,7 +680,6 @@ document.addEventListener(
             );
 
             return;
-
         }
 
 
@@ -744,7 +688,6 @@ document.addEventListener(
         ) {
 
             return;
-
         }
 
 
@@ -772,7 +715,6 @@ async function submitGuess(
     ) {
 
         return;
-
     }
 
 
@@ -781,10 +723,8 @@ async function submitGuess(
 
 
     /*
-        Immediately remember the letter.
-
-        This prevents double tapping while
-        the Flask request is running.
+        Remember immediately to prevent
+        duplicate requests.
     */
 
     guessedLetters.add(
@@ -830,10 +770,6 @@ async function submitGuess(
             await response.json();
 
 
-        /*
-            Show server message.
-        */
-
         if (
             result.message
         ) {
@@ -844,10 +780,6 @@ async function submitGuess(
 
         }
 
-
-        /*
-            Update complete game state.
-        */
 
         if (
             result.game
@@ -877,12 +809,6 @@ async function submitGuess(
             error
         );
 
-
-        /*
-            Request failed.
-
-            Allow the letter to be tried again.
-        */
 
         guessedLetters.delete(
             letter
@@ -922,24 +848,16 @@ function showResult(game) {
     );
 
 
-    if (
-        game.score > 0
-    ) {
-
-        finalScoreElement.textContent =
-            game.score;
-
-    } else {
-
-        finalScoreElement.textContent =
-            "—";
-
-    }
-
+    /*
+        Only a winning word gets 1 point.
+    */
 
     if (
         game.won
     ) {
+
+        finalScoreElement.textContent =
+            "1";
 
         resultIcon.textContent =
             "🎉";
@@ -952,6 +870,9 @@ function showResult(game) {
 
     } else {
 
+        finalScoreElement.textContent =
+            "—";
+
         resultIcon.textContent =
             "💀";
 
@@ -960,6 +881,66 @@ function showResult(game) {
 
         resultText.textContent =
             "You used all 10 chances.";
+
+    }
+
+
+    /*
+        Show answer when game finishes.
+    */
+
+    if (
+        game.won ||
+        game.game_over
+    ) {
+
+        /*
+            The actual answer is returned
+            separately by /api/guess.
+        */
+
+        fetchAnswer();
+
+    }
+
+}
+
+
+/* =========================================================
+   FETCH ANSWER AFTER GAME
+========================================================= */
+
+async function fetchAnswer() {
+
+    try {
+
+        const response =
+            await fetch(
+                "/api/game",
+                {
+                    cache: "no-store"
+                }
+            );
+
+
+        const game =
+            await response.json();
+
+
+        /*
+            The masked word cannot reveal
+            the complete answer.
+
+            The answer is already supplied
+            by /api/guess when the game ends.
+        */
+
+    } catch (error) {
+
+        console.error(
+            "ANSWER ERROR:",
+            error
+        );
 
     }
 
@@ -993,7 +974,6 @@ restartButton.addEventListener(
         ) {
 
             return;
-
         }
 
 
@@ -1024,7 +1004,6 @@ restartButton.addEventListener(
 
             gameFinished =
                 false;
-
 
             submitting =
                 false;
