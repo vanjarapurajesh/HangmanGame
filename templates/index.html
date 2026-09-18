@@ -15,7 +15,11 @@
         content="#08090d"
     >
 
-    <title>Hangman — Word Challenge</title>
+    <title>
+        Hangman — Word Challenge
+    </title>
+
+    <!-- IMPORTANT: Correct Flask static path -->
 
     <link
         rel="stylesheet"
@@ -30,15 +34,19 @@
 <main class="app">
 
 
-    <!-- HEADER -->
+    <!-- =====================================================
+         HEADER
+    ====================================================== -->
 
     <header class="top-bar">
+
 
         <div class="brand">
 
             <div class="brand-logo">
                 H
             </div>
+
 
             <div class="brand-text">
 
@@ -58,6 +66,7 @@
         <!-- SCOREBOARD -->
 
         <div class="scoreboard">
+
 
             <div class="score-item">
 
@@ -110,12 +119,15 @@
 
             </div>
 
+
         </div>
 
     </header>
 
 
-    <!-- GAME CARD -->
+    <!-- =====================================================
+         GAME CARD
+    ====================================================== -->
 
     <section class="game-card">
 
@@ -152,41 +164,50 @@
         </div>
 
 
-        <!-- HANGMAN -->
+        <!-- =================================================
+             HANGMAN
+        ================================================== -->
 
         <div class="hangman-container">
 
             <div class="hangman">
+
 
                 <div
                     id="head"
                     class="hangman-part head"
                 ></div>
 
+
                 <div
                     id="body"
                     class="hangman-part body"
                 ></div>
+
 
                 <div
                     id="left-arm"
                     class="hangman-part left-arm"
                 ></div>
 
+
                 <div
                     id="right-arm"
                     class="hangman-part right-arm"
                 ></div>
+
 
                 <div
                     id="left-leg"
                     class="hangman-part left-leg"
                 ></div>
 
+
                 <div
                     id="right-leg"
                     class="hangman-part right-leg"
                 ></div>
+
 
             </div>
 
@@ -201,72 +222,59 @@
         ></div>
 
 
-        <!-- INVISIBLE INPUT -->
-
-        <input
-            id="keyboard-input"
-            class="keyboard-input"
-            type="text"
-            inputmode="none"
-            autocomplete="off"
-            autocorrect="off"
-            autocapitalize="none"
-            spellcheck="false"
-            readonly
-            aria-hidden="true"
-        >
-
-
-        <!-- MOBILE KEYBOARD -->
+        <!-- =================================================
+             MOBILE KEYBOARD
+        ================================================== -->
 
         <div
             id="mobile-keyboard"
             class="mobile-keyboard"
-            aria-label="On screen keyboard"
         >
 
+
             <div class="keyboard-row">
 
-                <button type="button" data-letter="q">Q</button>
-                <button type="button" data-letter="w">W</button>
-                <button type="button" data-letter="e">E</button>
-                <button type="button" data-letter="r">R</button>
-                <button type="button" data-letter="t">T</button>
-                <button type="button" data-letter="y">Y</button>
-                <button type="button" data-letter="u">U</button>
-                <button type="button" data-letter="i">I</button>
-                <button type="button" data-letter="o">O</button>
-                <button type="button" data-letter="p">P</button>
+                <button data-letter="q">Q</button>
+                <button data-letter="w">W</button>
+                <button data-letter="e">E</button>
+                <button data-letter="r">R</button>
+                <button data-letter="t">T</button>
+                <button data-letter="y">Y</button>
+                <button data-letter="u">U</button>
+                <button data-letter="i">I</button>
+                <button data-letter="o">O</button>
+                <button data-letter="p">P</button>
 
             </div>
 
 
             <div class="keyboard-row">
 
-                <button type="button" data-letter="a">A</button>
-                <button type="button" data-letter="s">S</button>
-                <button type="button" data-letter="d">D</button>
-                <button type="button" data-letter="f">F</button>
-                <button type="button" data-letter="g">G</button>
-                <button type="button" data-letter="h">H</button>
-                <button type="button" data-letter="j">J</button>
-                <button type="button" data-letter="k">K</button>
-                <button type="button" data-letter="l">L</button>
+                <button data-letter="a">A</button>
+                <button data-letter="s">S</button>
+                <button data-letter="d">D</button>
+                <button data-letter="f">F</button>
+                <button data-letter="g">G</button>
+                <button data-letter="h">H</button>
+                <button data-letter="j">J</button>
+                <button data-letter="k">K</button>
+                <button data-letter="l">L</button>
 
             </div>
 
 
             <div class="keyboard-row">
 
-                <button type="button" data-letter="z">Z</button>
-                <button type="button" data-letter="x">X</button>
-                <button type="button" data-letter="c">C</button>
-                <button type="button" data-letter="v">V</button>
-                <button type="button" data-letter="b">B</button>
-                <button type="button" data-letter="n">N</button>
-                <button type="button" data-letter="m">M</button>
+                <button data-letter="z">Z</button>
+                <button data-letter="x">X</button>
+                <button data-letter="c">C</button>
+                <button data-letter="v">V</button>
+                <button data-letter="b">B</button>
+                <button data-letter="n">N</button>
+                <button data-letter="m">M</button>
 
             </div>
+
 
         </div>
 
@@ -278,6 +286,7 @@
             <span class="section-title">
                 WRONG LETTERS
             </span>
+
 
             <div
                 id="wrong-letters"
@@ -297,14 +306,18 @@
         ></div>
 
 
-        <!-- RESULT POPUP -->
+        <!-- =================================================
+             RESULT POPUP
+        ================================================== -->
 
         <div
             id="game-result"
             class="game-result hidden"
         >
 
+
             <div class="result-popup">
+
 
                 <div
                     id="result-icon"
@@ -313,9 +326,11 @@
                     🎉
                 </div>
 
+
                 <h2 id="result-title">
                     You Win!
                 </h2>
+
 
                 <p id="result-text">
                     Excellent! You found the word.
@@ -327,6 +342,7 @@
                     <span>
                         THE WORD WAS
                     </span>
+
 
                     <strong id="answer">
                         —
@@ -340,6 +356,7 @@
                     <span>
                         SCORE
                     </span>
+
 
                     <strong id="final-score">
                         —
@@ -355,9 +372,11 @@
                     PLAY AGAIN
                 </button>
 
+
             </div>
 
         </div>
+
 
     </section>
 
@@ -383,10 +402,11 @@
         </span>
 
         <span id="keyboard-status">
-            SYSTEM KEYBOARD
+            PHYSICAL KEYBOARD
         </span>
 
     </footer>
+
 
 </main>
 
@@ -394,6 +414,7 @@
 <script
     src="{{ url_for('static', filename='js/game.js') }}"
 ></script>
+
 
 </body>
 
