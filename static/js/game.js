@@ -101,7 +101,7 @@ const bodyParts = [
 
 
 /* =========================================================
-   GAME STATE
+   STATE
 ========================================================= */
 
 let gameFinished = false;
@@ -156,7 +156,7 @@ function setupKeyboardMode() {
 
 
 /* =========================================================
-   SCORE + STATISTICS
+   SCORE
 ========================================================= */
 
 function updateScore(
@@ -165,12 +165,8 @@ function updateScore(
     winRate
 ) {
 
-    /*
-        Current word score
 
-        Win = 1
-        Otherwise = —
-    */
+    /* Current game */
 
     if (score > 0) {
 
@@ -181,15 +177,10 @@ function updateScore(
 
         scoreElement.textContent =
             "—";
-
     }
 
 
-    /*
-        Total score
-
-        Number of words won.
-    */
+    /* Total score */
 
     if (totalScore > 0) {
 
@@ -200,13 +191,10 @@ function updateScore(
 
         totalScoreElement.textContent =
             "—";
-
     }
 
 
-    /*
-        Win rate
-    */
+    /* Win rate */
 
     if (
         winRate !== null &&
@@ -220,7 +208,6 @@ function updateScore(
 
         winRateElement.textContent =
             "—";
-
     }
 
 }
@@ -238,7 +225,8 @@ async function loadGame() {
             await fetch(
                 "/api/game",
                 {
-                    cache: "no-store"
+                    cache:
+                        "no-store"
                 }
             );
 
@@ -248,7 +236,6 @@ async function loadGame() {
             throw new Error(
                 "Unable to load game."
             );
-
         }
 
 
@@ -281,6 +268,7 @@ async function loadGame() {
 ========================================================= */
 
 function updateGame(game) {
+
 
     renderWord(
         game.word
@@ -333,9 +321,7 @@ function updateGame(game) {
 
     if (game.game_over) {
 
-        showResult(
-            game
-        );
+        showResult(game);
 
     } else {
 
@@ -412,7 +398,6 @@ function renderWrongLetters(
             "None";
 
         return;
-
     }
 
 
@@ -439,7 +424,8 @@ function updateHangman(
     const partsToShow =
         Math.ceil(
             (
-                wrongGuesses / 10
+                wrongGuesses /
+                10
             ) *
             bodyParts.length
         );
@@ -480,7 +466,7 @@ function updateHangman(
 
 
 /* =========================================================
-   MOBILE KEYBOARD
+   KEYBOARD
 ========================================================= */
 
 function updateKeyboard() {
@@ -501,11 +487,6 @@ function updateKeyboard() {
 
             button.disabled =
                 false;
-
-
-            button.removeAttribute(
-                "aria-disabled"
-            );
 
 
             if (
@@ -584,7 +565,7 @@ function repeatedGuess(
 
 
 /* =========================================================
-   MOBILE KEYBOARD
+   MOBILE KEYBOARD CLICK
 ========================================================= */
 
 keyboardButtons.forEach(
@@ -597,12 +578,9 @@ keyboardButtons.forEach(
                 event.preventDefault();
 
 
-                if (
-                    gameFinished
-                ) {
+                if (gameFinished) {
 
                     return;
-
                 }
 
 
@@ -621,22 +599,13 @@ keyboardButtons.forEach(
                     );
 
                     return;
-
                 }
 
 
-                if (
-                    submitting
-                ) {
+                if (submitting) {
 
                     return;
-
                 }
-
-
-                button.classList.add(
-                    "used"
-                );
 
 
                 submitGuess(
@@ -652,28 +621,23 @@ keyboardButtons.forEach(
 
 
 /* =========================================================
-   DESKTOP PHYSICAL KEYBOARD
+   DESKTOP KEYBOARD
 ========================================================= */
 
 document.addEventListener(
     "keydown",
     function(event) {
 
-        if (
-            isMobileDevice()
-        ) {
+
+        if (isMobileDevice()) {
 
             return;
-
         }
 
 
-        if (
-            gameFinished
-        ) {
+        if (gameFinished) {
 
             return;
-
         }
 
 
@@ -684,7 +648,6 @@ document.addEventListener(
         ) {
 
             return;
-
         }
 
 
@@ -699,7 +662,6 @@ document.addEventListener(
         ) {
 
             return;
-
         }
 
 
@@ -717,16 +679,12 @@ document.addEventListener(
             );
 
             return;
-
         }
 
 
-        if (
-            submitting
-        ) {
+        if (submitting) {
 
             return;
-
         }
 
 
@@ -754,17 +712,24 @@ async function submitGuess(
     ) {
 
         return;
-
     }
 
 
-    submitting =
-        true;
+    submitting = true;
 
 
     guessedLetters.add(
         letter
     );
+
+
+    if (button) {
+
+        button.classList.add(
+            "used"
+        );
+
+    }
 
 
     try {
@@ -797,7 +762,6 @@ async function submitGuess(
             throw new Error(
                 `Server error: ${response.status}`
             );
-
         }
 
 
@@ -826,6 +790,11 @@ async function submitGuess(
 
         }
 
+
+        /*
+            IMPORTANT:
+            Set the answer AFTER updateGame().
+        */
 
         if (
             result.answer
@@ -866,8 +835,7 @@ async function submitGuess(
     }
 
 
-    submitting =
-        false;
+    submitting = false;
 
 }
 
@@ -885,9 +853,6 @@ function showResult(game) {
 
     if (game.won) {
 
-        finalScoreElement.textContent =
-            "1";
-
         resultIcon.textContent =
             "🎉";
 
@@ -897,10 +862,10 @@ function showResult(game) {
         resultText.textContent =
             "Excellent! You found the word.";
 
-    } else {
-
         finalScoreElement.textContent =
-            "—";
+            "1";
+
+    } else {
 
         resultIcon.textContent =
             "💀";
@@ -910,6 +875,9 @@ function showResult(game) {
 
         resultText.textContent =
             "You used all 10 chances.";
+
+        finalScoreElement.textContent =
+            "—";
 
     }
 
@@ -938,12 +906,10 @@ restartButton.addEventListener(
     "click",
     async function() {
 
-        if (
-            submitting
-        ) {
+
+        if (submitting) {
 
             return;
-
         }
 
 
@@ -954,7 +920,8 @@ restartButton.addEventListener(
                     "/api/restart",
                     {
                         method: "POST",
-                        cache: "no-store"
+                        cache:
+                            "no-store"
                     }
                 );
 
@@ -964,7 +931,6 @@ restartButton.addEventListener(
                 throw new Error(
                     "Restart failed."
                 );
-
             }
 
 
@@ -972,11 +938,9 @@ restartButton.addEventListener(
                 await response.json();
 
 
-            gameFinished =
-                false;
+            gameFinished = false;
 
-            submitting =
-                false;
+            submitting = false;
 
 
             guessedLetters.clear();
@@ -1004,6 +968,14 @@ restartButton.addEventListener(
             gameResult.classList.add(
                 "hidden"
             );
+
+
+            answerElement.textContent =
+                "—";
+
+
+            finalScoreElement.textContent =
+                "—";
 
 
             messageElement.textContent =
@@ -1051,7 +1023,7 @@ window.addEventListener(
 
 
 /* =========================================================
-   START GAME
+   START
 ========================================================= */
 
 loadGame();
