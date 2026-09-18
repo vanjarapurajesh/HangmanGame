@@ -39,22 +39,17 @@ def load_words():
             encoding="utf-8"
         ) as file:
 
-            words = []
-
-            for line in file:
-
-                word = line.strip().lower()
-
+            words = [
+                line.strip().lower()
+                for line in file
                 if (
-                    word
-                    and word.isalpha()
-                    and word.isascii()
-                ):
-
-                    words.append(word)
+                    line.strip()
+                    and line.strip().isalpha()
+                    and line.strip().isascii()
+                )
+            ]
 
         if not words:
-
             raise ValueError(
                 "Word list is empty."
             )
@@ -90,29 +85,29 @@ def create_game():
         WORDS
     )
 
+    # IMPORTANT:
+    # Create NEW lists for every new word.
     session["guessed_letters"] = []
 
     session["wrong_letters"] = []
 
     session["wrong_guesses"] = 0
 
-    # Current game score
-    # 0 while playing
-    # 1 after winning
+    # Current word score
     session["score"] = 0
 
     # Persistent statistics
     if "total_score" not in session:
-
         session["total_score"] = 0
 
     if "games_played" not in session:
-
         session["games_played"] = 0
+
+    session.modified = True
 
 
 # =========================================================
-# CALCULATE MASKED WORD
+# GET MASKED WORD
 # =========================================================
 
 def get_masked_word():
@@ -124,9 +119,11 @@ def get_masked_word():
     ]
 
     return "".join(
+
         letter
         if letter in guessed_letters
         else "_"
+
         for letter in answer
     )
 
@@ -147,7 +144,9 @@ def get_game():
         "games_played"
     ]
 
-    # Protect against old sessions
+
+    # Protect old/incomplete sessions
+
     if any(
         key not in session
         for key in required_keys
@@ -182,6 +181,11 @@ def get_game():
         "wrong_guesses"
     ]
 
+
+    # =====================================================
+    # GAME STATUS
+    # =====================================================
+
     won = (
         "_" not in masked_word
     )
@@ -190,7 +194,9 @@ def get_game():
         wrong_guesses >= MAX_CHANCES
     )
 
-    game_over = won or lost
+    game_over = (
+        won or lost
+    )
 
 
     # =====================================================
@@ -219,6 +225,10 @@ def get_game():
         win_rate = None
 
 
+    # =====================================================
+    # RETURN
+    # =====================================================
+
     return {
 
         "word":
@@ -235,17 +245,19 @@ def get_game():
             len(answer),
 
         "wrong_letters":
-            session[
-                "wrong_letters"
-            ],
+            list(
+                session["wrong_letters"]
+            ),
 
         "wrong_guesses":
             wrong_guesses,
 
+        # IMPORTANT:
+        # Return ALL guessed letters.
         "guessed_letters":
-            session[
-                "guessed_letters"
-            ],
+            list(
+                session["guessed_letters"]
+            ),
 
         "score":
             session["score"],
@@ -284,7 +296,7 @@ def index():
 
 
 # =========================================================
-# GET GAME
+# GET CURRENT GAME
 # =========================================================
 
 @app.route(
@@ -303,7 +315,7 @@ def api_game():
 
 
 # =========================================================
-# GUESS
+# GUESS LETTER
 # =========================================================
 
 @app.route(
@@ -312,7 +324,8 @@ def api_game():
 )
 def guess():
 
-    # Make sure game exists
+    # Make sure a game exists
+
     if "answer" not in session:
 
         create_game()
@@ -332,7 +345,7 @@ def guess():
 
 
     # =====================================================
-    # VALIDATE
+    # VALIDATION
     # =====================================================
 
     if (
@@ -350,7 +363,7 @@ def guess():
 
 
     # =====================================================
-    # CHECK IF GAME ALREADY FINISHED
+    # CHECK GAME STATUS
     # =====================================================
 
     current_game = get_game()
@@ -372,12 +385,14 @@ def guess():
 
 
     # =====================================================
-    # REPEATED LETTER
+    # CHECK REPEATED LETTER
     # =====================================================
 
-    if letter in session[
-        "guessed_letters"
-    ]:
+    guessed_letters = list(
+        session["guessed_letters"]
+    )
+
+    if letter in guessed_letters:
 
         return jsonify({
 
@@ -394,16 +409,23 @@ def guess():
 
 
     # =====================================================
-    # SAVE GUESS
+    # SAVE GUESSED LETTER
     # =====================================================
 
-    session[
-        "guessed_letters"
-    ].append(letter)
+    # IMPORTANT FIX:
+    # Create a new list instead of modifying
+    # the session list in-place.
+
+    guessed_letters.append(
+        letter
+    )
+
+    session["guessed_letters"] = \
+        guessed_letters
 
 
     # =====================================================
-    # CORRECT
+    # CORRECT GUESS
     # =====================================================
 
     if letter in session["answer"]:
@@ -414,26 +436,42 @@ def guess():
 
 
     # =====================================================
-    # WRONG
+    # WRONG GUESS
     # =====================================================
 
     else:
 
-        session[
-            "wrong_guesses"
-        ] += 1
+        wrong_letters = list(
+            session["wrong_letters"]
+        )
 
-        session[
-            "wrong_letters"
-        ].append(letter)
+        wrong_letters.append(
+            letter
+        )
+
+        # IMPORTANT FIX:
+        # Reassign the complete list.
+
+        session["wrong_letters"] = \
+            wrong_letters
+
+        session["wrong_guesses"] = (
+            session["wrong_guesses"] + 1
+        )
 
         message = (
             f'"{letter.upper()}" is not in the word.'
         )
 
 
+    # Make sure Flask saves
+    # every session change.
+
+    session.modified = True
+
+
     # =====================================================
-    # CHECK RESULT
+    # CHECK WORD
     # =====================================================
 
     masked_word = get_masked_word()
@@ -445,13 +483,23 @@ def guess():
 
     if "_" not in masked_word:
 
-        # Exactly ONE point for completing
-        # the complete word.
+        # Exactly 1 point
+        # for completing the word.
+
         session["score"] = 1
 
-        session["total_score"] += 1
+        # Total score =
+        # total words won.
 
-        session["games_played"] += 1
+        session["total_score"] = (
+            session["total_score"] + 1
+        )
+
+        # Count completed game.
+
+        session["games_played"] = (
+            session["games_played"] + 1
+        )
 
         message = (
             "🎉 You completed the word! +1 point"
@@ -467,18 +515,32 @@ def guess():
         >= MAX_CHANCES
     ):
 
-        # Zero points for losing
+        # No point for losing.
+
         session["score"] = 0
 
-        session["games_played"] += 1
+        # Count completed game.
+
+        session["games_played"] = (
+            session["games_played"] + 1
+        )
 
         message = (
             "Game over! Better luck next time."
         )
 
 
+    # Make sure final state is saved.
+
+    session.modified = True
+
+
     game = get_game()
 
+
+    # =====================================================
+    # RESPONSE
+    # =====================================================
 
     return jsonify({
 
@@ -506,7 +568,8 @@ def guess():
 )
 def restart():
 
-    # Preserve statistics
+    # Keep statistics.
+
     total_score = session.get(
         "total_score",
         0
@@ -518,8 +581,12 @@ def restart():
     )
 
 
+    # Clear only the current game.
+
     session.clear()
 
+
+    # Restore statistics.
 
     session["total_score"] = \
         total_score
@@ -528,7 +595,12 @@ def restart():
         games_played
 
 
+    # Create fresh word.
+
     create_game()
+
+
+    session.modified = True
 
 
     return jsonify({
@@ -540,7 +612,7 @@ def restart():
 
 
 # =========================================================
-# VERCEL / LOCAL
+# RUN
 # =========================================================
 
 if __name__ == "__main__":
